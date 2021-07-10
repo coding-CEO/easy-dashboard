@@ -1,0 +1,25 @@
+#LoginContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#LoginContainer form {
+  margin-top: 50px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 3px;
+  box-shadow: gray 0px 0px 4px;
+}
+
+#LoginContainer form h2 {
+  margin-bottom: 20px;
+}
+
+#LoginContainer form .input {
+  margin-bottom: 15px;
+}
