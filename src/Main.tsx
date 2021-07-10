@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import App from './App';
-import LoadingPage from './components/LoadingPage';
+import LoadingPage from './pages/LoadingPage';
 
 const Main = () => {
     const [isLoading, setLoading] = useState<Boolean>(true);

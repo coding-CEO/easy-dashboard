@@ -5,7 +5,7 @@ import './LoadingPage.css';
 const LoadingPage = () => {
     return (
         <div id="loadingDiv">
-            <img src={loadingImg} />
+            <img src={loadingImg} alt="Loading" />
         </div>
     );
 }
