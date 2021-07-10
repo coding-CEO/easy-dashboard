@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import HomePage from './pages/HomePage';
@@ -7,9 +7,7 @@ import UserPage from './pages/user/UserPage';
 import NavigationBar from './components/NavigationBar';
 
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { useState } from 'react';
 import { setTimeout } from 'timers';
-import { useEffect } from 'react';
 import { GuestUser } from './classes/GuestUser';
 import { LoginStatus } from './utils/enums';
 
@@ -19,7 +17,7 @@ interface Props {
 
 const App: React.FC<Props> = (props: Props) => {
 
-  const [guestUser, setGuestUser] = useState<GuestUser | null>(null);
+  const [guestUser, setGuestUser] = useState<GuestUser>();
 
   const componentDidMount = async () => {
     await setUserLoggedIn(setGuestUser);
@@ -33,9 +31,9 @@ const App: React.FC<Props> = (props: Props) => {
     return new Promise((resolve, reject) => {
       //TODO: check user login here and return status.
       setTimeout(() => {
-        setGuestUser(new GuestUser(""));
+        setGuestUser(new GuestUser("abc@xyz.com"));
         props.setLoading(false);
-        resolve(console.log("Logged out"));
+        resolve(console.log("Logged in"));
       }, 2000);
     });
   }
@@ -58,9 +56,10 @@ const App: React.FC<Props> = (props: Props) => {
             <Route path="/" exact render={(routeProps) => {
               switch (getLoginStatus()) {
                 case LoginStatus.LOGGED_IN:
-                  return <UserPage />;
+                  // @ts-ignore // Below guestUser will never be undefined
+                  return <Redirect to={`/user/${guestUser.getEmail()}`} />;
                 case LoginStatus.LOGGED_OUT:
-                  return <HomePage />;
+                  return <HomePage setGuestUser={setGuestUser} />;
                 default:
                   return <div></div>;
               }
@@ -71,7 +70,7 @@ const App: React.FC<Props> = (props: Props) => {
                 case LoginStatus.LOGGED_IN:
                   return <CompanyDashboardPage />;
                 case LoginStatus.LOGGED_OUT:
-                  return <HomePage />;
+                  return <Redirect to="/" />;
                 default:
                   return <div></div>;
               }
@@ -81,9 +80,13 @@ const App: React.FC<Props> = (props: Props) => {
             <Route path="/user/:userEmail" exact render={(routeProps) => {
               switch (getLoginStatus()) {
                 case LoginStatus.LOGGED_IN:
-                  return <UserPage />;
+                  // @ts-ignore // Below guestUser will never be undefined
+                  if (routeProps.match.params.userEmail === guestUser.getEmail())
+                    return <UserPage />
+                  // @ts-ignore // Below guestUser will never be undefined
+                  return <Redirect to={`/user/${guestUser.getEmail()}`} />;
                 case LoginStatus.LOGGED_OUT:
-                  return <HomePage />;
+                  return <Redirect to="/" />;
                 default:
                   return <div></div>;
               }
