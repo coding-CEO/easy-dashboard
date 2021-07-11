@@ -3,3 +3,8 @@ export enum LoginStatus {
   LOGGED_OUT,
   UNDEFINED,
 }
+
+export enum Privilage {
+  ADMIN,
+  USER,
+}

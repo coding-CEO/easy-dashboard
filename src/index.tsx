@@ -4,8 +4,8 @@ import './index.css';
 import Main from './Main';
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React.Fragment>
     <Main />
-  </React.StrictMode>,
+  </React.Fragment>,
   document.getElementById('root')
 );

@@ -81,8 +81,10 @@ const App: React.FC<Props> = (props: Props) => {
               switch (getLoginStatus()) {
                 case LoginStatus.LOGGED_IN:
                   // @ts-ignore // Below guestUser will never be undefined
-                  if (routeProps.match.params.userEmail === guestUser.getEmail())
-                    return <UserPage />
+                  if (routeProps.match.params.userEmail === guestUser.getEmail()) {
+                    // @ts-ignore // Below guestUser will never be undefined
+                    return <UserPage guestUser={guestUser} setGuestUser={setGuestUser} />
+                  }
                   // @ts-ignore // Below guestUser will never be undefined
                   return <Redirect to={`/user/${guestUser.getEmail()}`} />;
                 case LoginStatus.LOGGED_OUT:
