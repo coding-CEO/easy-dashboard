@@ -1,0 +1,26 @@
+.UserPage_container {
+  padding-top: 20px;
+}
+
+.UserPage_container h2 {
+  margin-bottom: 30px;
+}
+
+.UserPage_container .dashboardRow {
+  cursor: pointer;
+}
+
+.UserPage_container .dashboardRow:hover {
+  background-color: rgb(207, 207, 207);
+}
+
+.UserPage_container .dashboardListButtons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.UserPage_container .dashboardListButtons button {
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
