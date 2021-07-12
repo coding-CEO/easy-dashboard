@@ -68,7 +68,8 @@ const App: React.FC<Props> = (props: Props) => {
             <Route path="/company/:companyId/dashboard" exact render={(routeProps) => {
               switch (getLoginStatus()) {
                 case LoginStatus.LOGGED_IN:
-                  return <CompanyDashboardPage />;
+                  // @ts-ignore // Below guestUser will never be undefined
+                  return <CompanyDashboardPage guestUser={guestUser} />;
                 case LoginStatus.LOGGED_OUT:
                   return <Redirect to="/" />;
                 default:
