@@ -10,6 +10,8 @@ import { GuestUser } from '../../classes/GuestUser';
 import { Privilage } from '../../utils/enums';
 import { Button, Divider, Drawer, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
 import { Employee } from '../../classes/dashboardClasses/Employee';
+import GraphContainer from './GraphContainer';
+import { Graph } from '../../classes/dashboardClasses/Graph';
 
 interface Props {
     guestUser: GuestUser;
@@ -47,7 +49,7 @@ const CompanyDashboardPage = (props: Props) => {
 
         // use company ID to get dashboard data mentioned in the dashboard class
         await getDashboard(params.companyId);
-        let dashboard = new Dashboard('1', 'ABC Sales');
+        let dashboard = new Dashboard('1', 'ABC Sales', [new Graph()]);
 
         //@ts-ignore
         if (privilage === Privilage.ADMIN)
@@ -131,6 +133,10 @@ const CompanyDashboardPage = (props: Props) => {
         );
     }
 
+    const handleGraphAdd = (): void => {
+        //TODO: complete add graph code...
+    }
+
     const getEditControls = (): JSX.Element => {
         return (
             <div className="editControlContainer">
@@ -140,6 +146,9 @@ const CompanyDashboardPage = (props: Props) => {
                 </Button>
                 <Button variant="outlined" size="small" onClick={handleEmployeesButtonClick}>
                     Employees
+                </Button>
+                <Button variant="outlined" size="small" onClick={handleGraphAdd}>
+                    Add Graph
                 </Button>
                 <Drawer anchor="right" open={isEmployeesListOn} onClose={handleEmployeesButtonClick}>
                     {getEmployeesListView()}
@@ -156,9 +165,8 @@ const CompanyDashboardPage = (props: Props) => {
                     <h2>{user.dashboard.name}</h2>
                     {(user instanceof Admin) && getEditControls()}
                 </nav>
-                <div className="graphsContainer">
-                    {/* TODO: complete this */}
-                </div>
+                {/*@ts-ignore // user is never undefined below*/}
+                <GraphContainer user={user} />
             </div>
         );
     }
