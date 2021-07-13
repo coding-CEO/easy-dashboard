@@ -102,10 +102,23 @@ const CompanyDashboardPage = (props: Props) => {
         new Employee('xyz@gmail.com', Privilage.USER)]);
     }
 
+    const handleAddEmployee = (): void => {
+        //TODO: complete this.
+    }
+
     const getEmployeesListView = (): JSX.Element => {
         return (
             <div className="employeesListContainer">
-                <h3>Employees</h3>
+                <div style={{
+                    width: '100%', display: 'flex',
+                    alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                    <h3>Employees</h3>
+                    <Button variant="outlined" size="small" color="primary"
+                        onClick={handleAddEmployee}>
+                        Add Employee
+                    </Button>
+                </div>
                 <Divider />
                 <List>
                     {employees.map((employee: Employee, index: number) => {

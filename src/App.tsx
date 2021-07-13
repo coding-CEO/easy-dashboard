@@ -49,9 +49,9 @@ const App: React.FC<Props> = (props: Props) => {
 
   return (
     <React.Fragment>
-      <NavigationBar />
-      <div className="App">
-        <Router>
+      <Router>
+        <NavigationBar />
+        <div className="App">
           <Switch>
             <Route path="/" exact render={(routeProps) => {
               switch (getLoginStatus()) {
@@ -99,8 +99,8 @@ const App: React.FC<Props> = (props: Props) => {
               return <h2>404 Page Not Found</h2>
             }} />
           </Switch>
-        </Router>
-      </div>
+        </div>
+      </Router>
     </React.Fragment>
   );
 }
