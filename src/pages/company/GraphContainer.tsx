@@ -14,7 +14,7 @@ const GraphContainer = (props: Props) => {
         <div className="graphsContainer">
             {/* @ts-ignore // below dashboard is never undefined */}
             {props.user.dashboard.graphs.map((graph: Graph) => {
-                return <GraphComponent graph={graph} />;
+                return <GraphComponent key={graph.id} graph={graph} />;
             })}
         </div>
     );

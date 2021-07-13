@@ -1,6 +1,7 @@
 import { ApiType, GraphType } from "../../../utils/enums";
 
 export class Graph {
+  public id: string;
   public type: GraphType;
   public name: string;
   public apiType: ApiType;
@@ -10,6 +11,7 @@ export class Graph {
   public yCoordinatePath: string;
 
   constructor(
+    id: string,
     type: GraphType,
     name: string,
     apiType: ApiType,
@@ -18,6 +20,7 @@ export class Graph {
     xCoordinatePath: string,
     yCoordinatePath: string
   ) {
+    this.id = id;
     this.type = type;
     this.name = name;
     this.apiType = apiType;

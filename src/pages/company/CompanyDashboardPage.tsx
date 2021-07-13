@@ -7,7 +7,7 @@ import { Admin } from '../../classes/dashboardClasses/Admin';
 import { Dashboard } from '../../classes/dashboardClasses/Dashboard';
 import { User } from '../../classes/dashboardClasses/User';
 import { GuestUser } from '../../classes/GuestUser';
-import { Privilage } from '../../utils/enums';
+import { ApiType, GraphType, Privilage } from '../../utils/enums';
 import { Button, Divider, Drawer, FormControl, InputLabel, List, MenuItem, Select } from '@material-ui/core';
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
@@ -49,7 +49,8 @@ const CompanyDashboardPage = (props: Props) => {
 
         // use company ID to get dashboard data mentioned in the dashboard class
         await getDashboard(params.companyId);
-        let dashboard = new Dashboard('1', 'ABC Sales', [new Graph()]);
+        let dashboard = new Dashboard('1', 'ABC Sales', [new Graph('1', GraphType.LINE, "GName",
+            ApiType.REST, "fakeurl", "#e4e4e4", 'x', 'y')]);
 
         //@ts-ignore
         if (privilage === Privilage.ADMIN)
