@@ -14,3 +14,9 @@ export enum GraphType {
   BAR,
   PIE,
 }
+
+export enum ApiType {
+  REST,
+  SOAP,
+  GRAPH_QL,
+}
