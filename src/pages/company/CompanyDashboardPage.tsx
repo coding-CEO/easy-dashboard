@@ -11,7 +11,7 @@ import { Privilage } from '../../utils/enums';
 import { Button, Divider, Drawer, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
-import { Graph } from '../../classes/dashboardClasses/Graph';
+import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 
 interface Props {
     guestUser: GuestUser;

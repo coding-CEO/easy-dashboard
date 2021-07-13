@@ -2,7 +2,7 @@ import * as React from 'react';
 import './GraphComponent.css';
 
 import { useEffect } from 'react';
-import { Graph } from '../../classes/dashboardClasses/Graph';
+import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 
 interface Props {
     graph: Graph;

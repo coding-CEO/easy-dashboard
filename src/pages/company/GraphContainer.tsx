@@ -2,7 +2,7 @@ import * as React from 'react';
 import './GraphContainer.css';
 
 import { User } from '../../classes/dashboardClasses/User';
-import { Graph } from '../../classes/dashboardClasses/Graph';
+import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import GraphComponent from './GraphComponent';
 
 interface Props {
