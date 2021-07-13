@@ -2,11 +2,12 @@ import * as React from 'react';
 import './GraphContainer.css';
 
 import { User } from '../../classes/dashboardClasses/User';
-import { Graph } from '../../classes/dashboardClasses/Graph';
+import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import GraphComponent from './GraphComponent';
 
 interface Props {
     user: User;
+    isEditModeOn: boolean;
 }
 
 const GraphContainer = (props: Props) => {
@@ -14,7 +15,7 @@ const GraphContainer = (props: Props) => {
         <div className="graphsContainer">
             {/* @ts-ignore // below dashboard is never undefined */}
             {props.user.dashboard.graphs.map((graph: Graph) => {
-                return <GraphComponent graph={graph} />;
+                return <GraphComponent key={graph.id} graph={graph} isEditModeOn={props.isEditModeOn} />;
             })}
         </div>
     );

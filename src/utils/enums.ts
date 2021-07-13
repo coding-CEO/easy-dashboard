@@ -8,3 +8,15 @@ export enum Privilage {
   ADMIN,
   USER,
 }
+
+export enum GraphType {
+  LINE,
+  BAR,
+  PIE,
+}
+
+export enum ApiType {
+  REST,
+  SOAP,
+  GRAPH_QL,
+}

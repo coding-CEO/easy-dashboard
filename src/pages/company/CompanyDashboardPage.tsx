@@ -7,11 +7,12 @@ import { Admin } from '../../classes/dashboardClasses/Admin';
 import { Dashboard } from '../../classes/dashboardClasses/Dashboard';
 import { User } from '../../classes/dashboardClasses/User';
 import { GuestUser } from '../../classes/GuestUser';
-import { Privilage } from '../../utils/enums';
-import { Button, Divider, Drawer, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Select, Typography } from '@material-ui/core';
+import { ApiType, Privilage } from '../../utils/enums';
+import { Button, Divider, Drawer, FormControl, InputLabel, List, MenuItem, Select } from '@material-ui/core';
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
-import { Graph } from '../../classes/dashboardClasses/Graph';
+import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
+import { BarGraph } from '../../classes/dashboardClasses/graphClasses/BarGraph';
 
 interface Props {
     guestUser: GuestUser;
@@ -49,7 +50,10 @@ const CompanyDashboardPage = (props: Props) => {
 
         // use company ID to get dashboard data mentioned in the dashboard class
         await getDashboard(params.companyId);
-        let dashboard = new Dashboard('1', 'ABC Sales', [new Graph()]);
+        let dashboard = new Dashboard('1', 'ABC Sales', [new LineGraph('1', "GName",
+            ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true), new BarGraph('2', "GName",
+                ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco'), new LineGraph('3', "GName",
+                    ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true)]);
 
         //@ts-ignore
         if (privilage === Privilage.ADMIN)
@@ -166,7 +170,7 @@ const CompanyDashboardPage = (props: Props) => {
                     {(user instanceof Admin) && getEditControls()}
                 </nav>
                 {/*@ts-ignore // user is never undefined below*/}
-                <GraphContainer user={user} />
+                <GraphContainer user={user} isEditModeOn={isEditModeOn} />
             </div>
         );
     }

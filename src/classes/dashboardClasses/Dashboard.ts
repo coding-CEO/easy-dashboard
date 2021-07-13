@@ -1,4 +1,4 @@
-import { Graph } from "./Graph";
+import { Graph } from "./graphClasses/Graph";
 
 export class Dashboard {
   public id: string = "";
