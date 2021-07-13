@@ -1,4 +1,4 @@
-import { Chart } from "chart.js";
+import { Chart, ChartTypeRegistry } from "chart.js";
 import { ApiType } from "../../../utils/enums";
 import { Graph } from "./Graph";
 
@@ -25,18 +25,11 @@ export class LineGraph extends Graph {
     );
     this.fill = fill;
   }
-
   public generateGraph(
-    canvasContext: CanvasRenderingContext2D | null,
+    canvasContext: CanvasRenderingContext2D,
     graphData: {}[]
-  ): void {
-    if (!canvasContext) return;
-
-    if (this.graphInstance) {
-      this.graphInstance.destroy();
-    }
-
-    this.graphInstance = new Chart(canvasContext, {
+  ): Chart<keyof ChartTypeRegistry, {}[], unknown> {
+    return new Chart(canvasContext, {
       type: "line",
       data: {
         datasets: [

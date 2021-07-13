@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import { useState, useRef } from 'react';
 import { setTimeout } from 'timers';
-import { Chart, registerables } from 'chart.js';
+import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
 
 interface Props {
     graph: Graph;
@@ -15,12 +15,14 @@ interface Props {
 const GraphComponent = (props: Props) => {
 
     const [graphData, setGraphData] = useState<{}[]>([]);
+    const [graphInstance, setGraphInstance] = useState<Chart<keyof ChartTypeRegistry, {}[], unknown>>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     Chart.register(...registerables);
 
     const componentDidMount = async () => {
         await getGraphData();
+        renderGraph();
     }
 
     useEffect(() => {
@@ -39,15 +41,22 @@ const GraphComponent = (props: Props) => {
     }
 
     const renderGraph = (): void => {
-        if (!canvasRef.current) return;
-        const canvasContext: CanvasRenderingContext2D | null = canvasRef.current.getContext('2d');
-        props.graph.generateGraph(canvasContext, graphData);
+        //@ts-ignore // nothing will be null/undefined because this is in componentDidMount()
+        const canvasContext: CanvasRenderingContext2D = canvasRef.current.getContext('2d');
+        if (!graphInstance)
+            setGraphInstance(props.graph.generateGraph(canvasContext, graphData));
+    }
+
+    const updateGraph = (): void => {
+        if (!graphInstance) return;
+        graphInstance.data.datasets[0].data = graphData;
+        graphInstance.update();
     }
 
     return (
         <div className="graphCanvasContainer">
-            <canvas id={props.graph.id} ref={canvasRef} />
-            {graphData && renderGraph()}
+            <canvas ref={canvasRef} />
+            {updateGraph()}
         </div>
     );
 }
