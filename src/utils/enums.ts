@@ -8,3 +8,9 @@ export enum Privilage {
   ADMIN,
   USER,
 }
+
+export enum GraphType {
+  LINE,
+  BAR,
+  PIE,
+}
