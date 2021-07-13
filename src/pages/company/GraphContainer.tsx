@@ -7,6 +7,7 @@ import GraphComponent from './GraphComponent';
 
 interface Props {
     user: User;
+    isEditModeOn: boolean;
 }
 
 const GraphContainer = (props: Props) => {
@@ -14,7 +15,7 @@ const GraphContainer = (props: Props) => {
         <div className="graphsContainer">
             {/* @ts-ignore // below dashboard is never undefined */}
             {props.user.dashboard.graphs.map((graph: Graph) => {
-                return <GraphComponent key={graph.id} graph={graph} />;
+                return <GraphComponent key={graph.id} graph={graph} isEditModeOn={props.isEditModeOn} />;
             })}
         </div>
     );

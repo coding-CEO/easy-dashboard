@@ -1,18 +1,25 @@
-import { ApiType, GraphType } from "../../../utils/enums";
+import {
+  BubbleDataPoint,
+  Chart,
+  ChartTypeRegistry,
+  ScatterDataPoint,
+} from "chart.js";
+import { ApiType } from "../../../utils/enums";
 
-export class Graph {
+export abstract class Graph {
   public id: string;
-  public type: GraphType;
   public name: string;
   public apiType: ApiType;
   public apiUrl: string;
   public colorHex: string;
   public xCoordinatePath: string;
   public yCoordinatePath: string;
+  public graphInstance:
+    | Chart<keyof ChartTypeRegistry, {}[], unknown>
+    | undefined;
 
   constructor(
     id: string,
-    type: GraphType,
     name: string,
     apiType: ApiType,
     apiUrl: string,
@@ -21,7 +28,6 @@ export class Graph {
     yCoordinatePath: string
   ) {
     this.id = id;
-    this.type = type;
     this.name = name;
     this.apiType = apiType;
     this.apiUrl = apiUrl;
@@ -29,4 +35,9 @@ export class Graph {
     this.xCoordinatePath = xCoordinatePath;
     this.yCoordinatePath = yCoordinatePath;
   }
+
+  public abstract generateGraph(
+    canvasContext: CanvasRenderingContext2D | null,
+    graphData: {}[]
+  ): void;
 }
