@@ -2,8 +2,7 @@ import { Chart, ChartTypeRegistry } from "chart.js";
 import { ApiType } from "../../../utils/enums";
 import { Graph } from "./Graph";
 
-export class LineGraph extends Graph {
-  public fill: boolean;
+export class BarGraph extends Graph {
   constructor(
     id: string,
     name: string,
@@ -11,8 +10,7 @@ export class LineGraph extends Graph {
     apiUrl: string,
     colorHex: string,
     xCoordinatePath: string,
-    yCoordinatePath: string,
-    fill: boolean
+    yCoordinatePath: string
   ) {
     super(
       id,
@@ -23,21 +21,19 @@ export class LineGraph extends Graph {
       xCoordinatePath,
       yCoordinatePath
     );
-    this.fill = fill;
   }
   public generateGraph(
     canvasContext: CanvasRenderingContext2D,
     graphData: {}[]
   ): Chart<keyof ChartTypeRegistry, {}[], unknown> {
     return new Chart(canvasContext, {
-      type: "line",
+      type: "bar",
       data: {
         datasets: [
           {
             label: this.name,
             data: graphData,
             backgroundColor: this.colorHex,
-            fill: this.fill,
           },
         ],
       },

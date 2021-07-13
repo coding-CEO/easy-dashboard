@@ -29,7 +29,7 @@ export abstract class Graph {
   }
 
   public abstract generateGraph(
-    canvasContext: CanvasRenderingContext2D | null,
+    canvasContext: CanvasRenderingContext2D,
     graphData: {}[]
   ): Chart<keyof ChartTypeRegistry, {}[], unknown>;
 }

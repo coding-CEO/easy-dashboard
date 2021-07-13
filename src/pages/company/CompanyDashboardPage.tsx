@@ -12,6 +12,7 @@ import { Button, Divider, Drawer, FormControl, InputLabel, List, MenuItem, Selec
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
 import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
+import { BarGraph } from '../../classes/dashboardClasses/graphClasses/BarGraph';
 
 interface Props {
     guestUser: GuestUser;
@@ -50,7 +51,9 @@ const CompanyDashboardPage = (props: Props) => {
         // use company ID to get dashboard data mentioned in the dashboard class
         await getDashboard(params.companyId);
         let dashboard = new Dashboard('1', 'ABC Sales', [new LineGraph('1', "GName",
-            ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', false)]);
+            ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true), new BarGraph('2', "GName",
+                ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco'), new LineGraph('3', "GName",
+                    ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true)]);
 
         //@ts-ignore
         if (privilage === Privilage.ADMIN)

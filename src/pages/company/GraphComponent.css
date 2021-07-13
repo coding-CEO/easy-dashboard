@@ -4,6 +4,7 @@
   border-radius: 4px;
   box-shadow: black 0 0 2px;
   padding: 5px;
+  margin: 10px;
 }
 
 .graphCanvasContainer canvas {
