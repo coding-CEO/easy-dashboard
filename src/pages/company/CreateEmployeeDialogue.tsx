@@ -21,6 +21,7 @@ const CreateEmployeeDialogue = (props: Props) => {
     const handleClose = (isComplete?: boolean) => {
         let temp_employee = employee;
         setEmployee(new Employee("", Privilage.USER));
+        setPrivilage(Privilage.USER);
         if (isComplete)
             props.onClose(temp_employee);
         else
@@ -45,7 +46,7 @@ const CreateEmployeeDialogue = (props: Props) => {
                     <TextField className="input" label="Employee Email" variant="outlined"
                         style={{ marginBottom: '15px' }} type="email" onChange={(input) => {
                             input.target.value = input.target.value.trim();
-                            let temp_employee = employee
+                            let temp_employee = employee;
                             temp_employee.email = input.target.value;
                             setEmployee(temp_employee);
                         }} required fullWidth />

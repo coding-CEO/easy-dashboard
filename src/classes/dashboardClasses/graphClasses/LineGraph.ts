@@ -3,7 +3,7 @@ import { ApiType } from "../../../utils/enums";
 import { Graph } from "./Graph";
 
 export class LineGraph extends Graph {
-  public fill: boolean;
+  public fill: boolean = false;
   constructor(
     id: string,
     name: string,
@@ -12,7 +12,7 @@ export class LineGraph extends Graph {
     colorHex: string,
     xCoordinatePath: string,
     yCoordinatePath: string,
-    fill: boolean
+    fill?: boolean
   ) {
     super(
       id,
@@ -23,7 +23,7 @@ export class LineGraph extends Graph {
       xCoordinatePath,
       yCoordinatePath
     );
-    this.fill = fill;
+    if (fill) this.fill = fill;
   }
   public generateGraph(
     canvasContext: CanvasRenderingContext2D,

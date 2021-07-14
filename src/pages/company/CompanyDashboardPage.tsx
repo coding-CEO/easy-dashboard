@@ -14,6 +14,9 @@ import GraphContainer from './GraphContainer';
 import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
 import { BarGraph } from '../../classes/dashboardClasses/graphClasses/BarGraph';
 import CreateEmployeeDialogue from './CreateEmployeeDialogue';
+import CreateGraphDialogue from './CreateGraphDialogue';
+import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
+import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
 
 interface Props {
     guestUser: GuestUser;
@@ -30,6 +33,7 @@ const CompanyDashboardPage = (props: Props) => {
     const [isEmployeesListOn, setEmployeesListOn] = useState(false);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isAddEmployeePopupOn, setAddEmployeePopupOn] = useState(false);
+    const [isAddGraphPopupOn, setAddGraphPopupOn] = useState(false);
 
     const params = useParams<ParamsProps>();
 
@@ -52,10 +56,10 @@ const CompanyDashboardPage = (props: Props) => {
 
         // use company ID to get dashboard data mentioned in the dashboard class
         await getDashboard(params.companyId);
-        let dashboard = new Dashboard('1', 'ABC Sales', [new LineGraph('1', "GName",
-            ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true), new BarGraph('2', "GName",
-                ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco'), new LineGraph('3', "GName",
-                    ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true)]);
+        let dashboard = new Dashboard('1', 'ABC Sales', [new PieGraph('3', "GName",
+            ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco'), new LineGraph('1', "GName",
+                ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true), new BarGraph('2', "GName",
+                    ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco')]);
 
         //@ts-ignore
         if (privilage === Privilage.ADMIN)
@@ -160,10 +164,6 @@ const CompanyDashboardPage = (props: Props) => {
         );
     }
 
-    const handleGraphAdd = (): void => {
-        //TODO: complete add graph code...
-    }
-
     const getEditControls = (): JSX.Element => {
         return (
             <div className="editControlContainer">
@@ -174,7 +174,7 @@ const CompanyDashboardPage = (props: Props) => {
                 <Button variant="outlined" size="small" onClick={handleEmployeesButtonClick}>
                     Employees
                 </Button>
-                <Button variant="outlined" size="small" onClick={handleGraphAdd}>
+                <Button variant="outlined" size="small" onClick={() => setAddGraphPopupOn(true)}>
                     Add Graph
                 </Button>
                 <Drawer anchor="right" open={isEmployeesListOn} onClose={handleEmployeesButtonClick}>
@@ -182,6 +182,14 @@ const CompanyDashboardPage = (props: Props) => {
                 </Drawer>
             </div>
         );
+    }
+
+    const addGraph = (graph: Graph, index?: number): void => {
+        if (!user) return;
+        let temp_user: User = Object.create(user);
+        if (!temp_user.dashboard) return;
+        if (index !== undefined) temp_user.dashboard.graphs[index] = graph;
+        else temp_user.dashboard.graphs = [graph, ...temp_user.dashboard.graphs];
     }
 
     const getUserView = (): JSX.Element => {
@@ -193,7 +201,8 @@ const CompanyDashboardPage = (props: Props) => {
                     {(user instanceof Admin) && getEditControls()}
                 </nav>
                 {/*@ts-ignore // user is never undefined below*/}
-                <GraphContainer user={user} isEditModeOn={isEditModeOn} />
+                <GraphContainer user={user} isEditModeOn={isEditModeOn} isAddGraphPopupOn={isAddGraphPopupOn}
+                    setAddGraphPopupOn={setAddGraphPopupOn} addGraph={addGraph} />
             </div>
         );
     }

@@ -6,10 +6,13 @@ import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import { useState, useRef } from 'react';
 import { setTimeout } from 'timers';
 import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
+import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
 
 interface Props {
     graph: Graph;
     isEditModeOn: boolean;
+    setAddGraphPopupOn(isAddGraphPopupOn: boolean): void;
+    setEditingGraphIndex(index: number): void;
 }
 
 const GraphComponent = (props: Props) => {
@@ -48,8 +51,13 @@ const GraphComponent = (props: Props) => {
     }
 
     const updateGraph = (): void => {
-        if (!graphInstance) return;
-        graphInstance.data.datasets[0].data = graphData;
+        if (!graphInstance || graphData.length <= 0) return;
+        if (props.graph instanceof PieGraph) {
+            graphInstance.data.labels = props.graph.getLables(graphData);
+            graphInstance.data.datasets[0].data = props.graph.getData(graphData);
+        } else {
+            graphInstance.data.datasets[0].data = graphData;
+        }
         graphInstance.update();
     }
 
