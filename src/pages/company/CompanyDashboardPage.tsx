@@ -186,10 +186,11 @@ const CompanyDashboardPage = (props: Props) => {
 
     const addGraph = (graph: Graph, index?: number): void => {
         if (!user) return;
-        let temp_user: User = Object.create(user);
+        let temp_user = Object.create(user);
         if (!temp_user.dashboard) return;
         if (index !== undefined) temp_user.dashboard.graphs[index] = graph;
         else temp_user.dashboard.graphs = [graph, ...temp_user.dashboard.graphs];
+        setUser(temp_user);
     }
 
     const getUserView = (): JSX.Element => {

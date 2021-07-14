@@ -7,6 +7,7 @@ import GraphComponent from './GraphComponent';
 import CreateGraphDialogue from './CreateGraphDialogue';
 import { GraphType } from '../../utils/enums';
 import { useState } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 interface Props {
     user: User;
@@ -28,29 +29,49 @@ const GraphContainer = (props: Props) => {
         setEditingGraphIndex(-1);
         if (!graph || graphType === undefined) return;
         if (graph.id === fakeId) {
+            console.log('new graph creating');
             props.addGraph(graph);
         } else {
+            console.log('old graph editing');
             props.addGraph(graph, index);
         }
     }
 
     const getEditingGraph = (): Graph | undefined => {
         /* @ts-ignore // below dashboard is never undefined */
-        if (editingGraphIndex < 0 || editingGraphIndex >= props.user.dashboard.graphs.length) return undefined;
+        if (editingGraphIndex < 0 || editingGraphIndex >= props.user.dashboard.graphs.length)
+            return undefined;
         /* @ts-ignore // below dashboard is never undefined */
         return props.user.dashboard.graphs[editingGraphIndex];
     }
 
     return (
-        <div className="graphsContainer">
-            {/* @ts-ignore // below dashboard is never undefined */}
-            {props.user.dashboard.graphs.map((graph: Graph, index: number) => {
-                return <GraphComponent key={graph.id} graph={graph} isEditModeOn={props.isEditModeOn}
-                    setAddGraphPopupOn={props.setAddGraphPopupOn} setEditingGraphIndex={setEditingGraphIndex} />;
-            })}
-            <CreateGraphDialogue open={props.isAddGraphPopupOn} fakeId={fakeId}
-                graph={getEditingGraph()} onClose={handleGraphAdd} />
-        </div>
+        <DragDropContext onDragEnd={(arg) => {
+            //TODO: handle drag drop logic
+        }}>
+            <Droppable droppableId="1">
+                {(provided) => (
+                    <div className="graphsContainer" {...provided.droppableProps} ref={provided.innerRef}>
+                        {/* @ts-ignore // below dashboard is never undefined */}
+                        {props.user.dashboard.graphs.map((graph: Graph, index: number) => {
+                            return (
+                                <Draggable key={graph.id} draggableId={graph.id} index={index}>
+                                    {(provided) => (
+                                        <GraphComponent graph={graph} isEditModeOn={props.isEditModeOn}
+                                            setAddGraphPopupOn={props.setAddGraphPopupOn}
+                                            setEditingGraphIndex={setEditingGraphIndex}
+                                            ref={provided.innerRef} provided={provided} index={index} />
+                                    )}
+                                </Draggable>
+                            );
+                        })}
+                        <CreateGraphDialogue open={props.isAddGraphPopupOn} fakeId={fakeId}
+                            graph={getEditingGraph()} onClose={handleGraphAdd} />
+                        {provided.placeholder}
+                    </div>
+                )}
+            </Droppable>
+        </DragDropContext>
     );
 }
 

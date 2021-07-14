@@ -21,12 +21,7 @@ interface Props {
 
 const CreateGraphDialogue = (props: Props) => {
 
-    const getGraph = (): Graph => {
-        if (props.graph) return props.graph;
-        return new LineGraph(props.fakeId, "", ApiType.REST, "", '#f1a135', '', '');
-    }
-
-    const [graph, setGraph] = useState<Graph>(getGraph());
+    const [graph, setGraph] = useState<Graph>(new LineGraph(props.fakeId, "", ApiType.REST, "", '#f1a135', '', ''));
     const [graphType, setGraphType] = useState<GraphType>(GraphType.LINE);
 
     const handleClose = (isComplete?: boolean) => {
@@ -38,6 +33,19 @@ const CreateGraphDialogue = (props: Props) => {
             props.onClose(temp_graph, temp_graph_type);
         else
             props.onClose();
+    }
+
+    const updateGraph = (): void => {
+        if (props.graph && graph.id !== props.graph.id)
+            setGraph(props.graph);
+    }
+
+    const updateGraphType = (): void => {
+        if (props.graph && graph.id !== props.graph.id) {
+            if (props.graph instanceof LineGraph) setGraphType(GraphType.LINE);
+            if (props.graph instanceof BarGraph) setGraphType(GraphType.BAR);
+            if (props.graph instanceof PieGraph) setGraphType(GraphType.PIE);
+        }
     }
 
     const convertGraph = (Graph: new (id: string,
@@ -90,7 +98,7 @@ const CreateGraphDialogue = (props: Props) => {
     }
     const getBarView = (): JSX.Element => {
         return (
-            <div></div>
+            <React.Fragment>.</React.Fragment>
         );
     }
 
@@ -107,7 +115,7 @@ const CreateGraphDialogue = (props: Props) => {
                         temp_graph.innterRadiusPercent = val;
                     }
                     setGraph(temp_graph);
-                }} required fullWidth />
+                }} defaultValue={temp_graph.innterRadiusPercent} required fullWidth />
         );
     }
 
@@ -126,6 +134,8 @@ const CreateGraphDialogue = (props: Props) => {
 
     return (
         <Dialog onClose={() => handleClose(false)} aria-labelledby="simple-dialog-title" open={props.open}>
+            {updateGraph()}
+            {updateGraphType()}
             <DialogTitle id="simple-dialog-title">Add Graph</DialogTitle>
             <form onSubmit={(e) => {
                 e.preventDefault();
@@ -167,7 +177,7 @@ const CreateGraphDialogue = (props: Props) => {
                             let temp_graph = graph;
                             temp_graph.name = input.target.value;
                             setGraph(temp_graph);
-                        }} required fullWidth />
+                        }} defaultValue={graph.name} required fullWidth />
 
                     <FormControlLabel
                         control={
@@ -217,7 +227,7 @@ const CreateGraphDialogue = (props: Props) => {
                             let temp_graph = graph;
                             temp_graph.apiUrl = input.target.value;
                             setGraph(temp_graph);
-                        }} required fullWidth />
+                        }} defaultValue={graph.apiUrl} required fullWidth />
 
                     <TextField className="input" label="x-coordinate Variable Path in API" variant="outlined"
                         style={{ marginBottom: '15px' }} type="text" onChange={(input) => {
@@ -225,7 +235,7 @@ const CreateGraphDialogue = (props: Props) => {
                             let temp_graph = graph;
                             temp_graph.xCoordinatePath = input.target.value;
                             setGraph(temp_graph);
-                        }} required fullWidth />
+                        }} defaultValue={graph.xCoordinatePath} required fullWidth />
 
                     <TextField className="input" label="y-coordinate Variable Path in API" variant="outlined"
                         style={{ marginBottom: '15px' }} type="text" onChange={(input) => {
@@ -233,7 +243,7 @@ const CreateGraphDialogue = (props: Props) => {
                             let temp_graph = graph;
                             temp_graph.yCoordinatePath = input.target.value;
                             setGraph(temp_graph);
-                        }} required fullWidth />
+                        }} defaultValue={graph.yCoordinatePath} required fullWidth />
 
                     {getGraphTypeView()}
 

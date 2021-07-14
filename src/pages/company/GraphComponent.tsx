@@ -7,15 +7,19 @@ import { useState, useRef } from 'react';
 import { setTimeout } from 'timers';
 import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
 import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
+import { DraggableProvided } from 'react-beautiful-dnd';
+import { Button } from '@material-ui/core';
 
 interface Props {
     graph: Graph;
     isEditModeOn: boolean;
+    provided: DraggableProvided
     setAddGraphPopupOn(isAddGraphPopupOn: boolean): void;
     setEditingGraphIndex(index: number): void;
+    index: number;
 }
 
-const GraphComponent = (props: Props) => {
+const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
 
     const [graphData, setGraphData] = useState<{}[]>([]);
     const [graphInstance, setGraphInstance] = useState<Chart<keyof ChartTypeRegistry, {}[], unknown>>();
@@ -50,6 +54,7 @@ const GraphComponent = (props: Props) => {
             setGraphInstance(props.graph.generateGraph(canvasContext, graphData));
     }
 
+    // TODO: UPDATE iS not Visible and also API change Fetching should be there...
     const updateGraph = (): void => {
         if (!graphInstance || graphData.length <= 0) return;
         if (props.graph instanceof PieGraph) {
@@ -61,12 +66,24 @@ const GraphComponent = (props: Props) => {
         graphInstance.update();
     }
 
+    const handleEditGraphClick = (): void => {
+        props.setEditingGraphIndex(props.index);
+        props.setAddGraphPopupOn(true);
+    }
+
     return (
-        <div className="graphCanvasContainer">
-            <canvas ref={canvasRef} />
+        <div className="graphCanvasContainer" ref={ref} {...props.provided.draggableProps}
+            {...props.provided.dragHandleProps}>
+            {props.isEditModeOn && <Button variant="outlined" size="small" color="primary"
+                onClick={handleEditGraphClick}>
+                Edit
+            </Button>}
+            <div className="graphSecondCanvasContainer">
+                <canvas ref={canvasRef} />
+            </div>
             {updateGraph()}
         </div>
     );
 }
 
-export default GraphComponent;
+export default React.forwardRef(GraphComponent);
