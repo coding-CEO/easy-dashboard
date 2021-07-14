@@ -13,6 +13,7 @@ import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
 import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
 import { BarGraph } from '../../classes/dashboardClasses/graphClasses/BarGraph';
+import CreateEmployeeDialogue from './CreateEmployeeDialogue';
 
 interface Props {
     guestUser: GuestUser;
@@ -28,6 +29,7 @@ const CompanyDashboardPage = (props: Props) => {
     const [isEditModeOn, setEditModeOn] = useState(false);
     const [isEmployeesListOn, setEmployeesListOn] = useState(false);
     const [employees, setEmployees] = useState<Employee[]>([]);
+    const [isAddEmployeePopupOn, setAddEmployeePopupOn] = useState(false);
 
     const params = useParams<ParamsProps>();
 
@@ -102,8 +104,15 @@ const CompanyDashboardPage = (props: Props) => {
         new Employee('xyz@gmail.com', Privilage.USER)]);
     }
 
-    const handleAddEmployee = (): void => {
-        //TODO: complete this.
+    const handleAddEmployeeClick = (): void => {
+        setAddEmployeePopupOn(!isAddEmployeePopupOn);
+    }
+
+    const handleAddEmployee = (employee?: Employee): void => {
+        setAddEmployeePopupOn(false);
+        if (employee === undefined) return;
+        //TODO: add this employee to database
+        setEmployees([employee, ...employees]);
     }
 
     const getEmployeesListView = (): JSX.Element => {
@@ -115,9 +124,10 @@ const CompanyDashboardPage = (props: Props) => {
                 }}>
                     <h3>Employees</h3>
                     <Button variant="outlined" size="small" color="primary"
-                        onClick={handleAddEmployee}>
+                        onClick={handleAddEmployeeClick}>
                         Add Employee
                     </Button>
+                    <CreateEmployeeDialogue open={isAddEmployeePopupOn} onClose={handleAddEmployee} />
                 </div>
                 <Divider />
                 <List>
