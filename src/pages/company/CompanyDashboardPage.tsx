@@ -185,11 +185,21 @@ const CompanyDashboardPage = (props: Props) => {
     }
 
     const addGraph = (graph: Graph, index?: number): void => {
+        //TODO: add this index graph to database
         if (!user) return;
         let temp_user = Object.create(user);
         if (!temp_user.dashboard) return;
         if (index !== undefined) temp_user.dashboard.graphs[index] = graph;
         else temp_user.dashboard.graphs = [graph, ...temp_user.dashboard.graphs];
+        setUser(temp_user);
+    }
+
+    const deleteGraph = (index: number): void => {
+        //TODO: delete this index graph from database
+        if (!user) return;
+        let temp_user = Object.create(user);
+        if (!temp_user.dashboard) return;
+        temp_user.dashboard.graphs.splice(index, 1);
         setUser(temp_user);
     }
 
@@ -203,7 +213,7 @@ const CompanyDashboardPage = (props: Props) => {
                 </nav>
                 {/*@ts-ignore // user is never undefined below*/}
                 <GraphContainer user={user} isEditModeOn={isEditModeOn} isAddGraphPopupOn={isAddGraphPopupOn}
-                    setAddGraphPopupOn={setAddGraphPopupOn} addGraph={addGraph} />
+                    setAddGraphPopupOn={setAddGraphPopupOn} addGraph={addGraph} deleteGraph={deleteGraph} />
             </div>
         );
     }

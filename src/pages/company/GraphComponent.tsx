@@ -7,7 +7,10 @@ import { useState, useRef } from 'react';
 import { setTimeout } from 'timers';
 import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { Button } from '@material-ui/core';
+import { Button, IconButton } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import AlertDialogue from '../../components/AlertDialogue';
 
 interface Props {
     graph: Graph;
@@ -15,6 +18,7 @@ interface Props {
     provided: DraggableProvided
     setAddGraphPopupOn(isAddGraphPopupOn: boolean): void;
     setEditingGraphIndex(index: number): void;
+    deleteGraph(index: number): void;
     index: number;
 }
 
@@ -24,6 +28,7 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     const [graphApiType, setGraphApiType] = useState(props.graph.apiType);
     const [graphApiUrl, setGraphApiUrl] = useState('');
     const [graphInstance, setGraphInstance] = useState<Chart<keyof ChartTypeRegistry, {}[], unknown>>();
+    const [isDeleteDialogueOpen, setDeleteDialogueOpen] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     Chart.register(...registerables);
@@ -74,13 +79,36 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
         props.setAddGraphPopupOn(true);
     }
 
+    const handleGraphDelete = (isSuccess: boolean): void => {
+        handleGraphDeleteClick();
+        if (isSuccess)
+            props.deleteGraph(props.index);
+    }
+
+    const handleGraphDeleteClick = (): void => {
+        setDeleteDialogueOpen(!isDeleteDialogueOpen);
+    }
+
+    const getEditControls = (): JSX.Element => {
+        return (
+            <div className="graphEditControlsContainer">
+                <IconButton aria-label="edit" color="primary"
+                    onClick={handleEditGraphClick}>
+                    <EditIcon />
+                </IconButton>
+                <IconButton aria-label="delete" color="primary" onClick={handleGraphDeleteClick}>
+                    <DeleteIcon />
+                </IconButton>
+                <AlertDialogue open={isDeleteDialogueOpen} title={"Want to Delete this Graph ?"}
+                    onClose={handleGraphDelete} />
+            </div>
+        );
+    }
+
     return (
         <div className="graphCanvasContainer" ref={ref} {...props.provided.draggableProps}
             {...props.provided.dragHandleProps}>
-            {props.isEditModeOn && <Button variant="outlined" size="small" color="primary"
-                onClick={handleEditGraphClick}>
-                Edit
-            </Button>}
+            {props.isEditModeOn && getEditControls()}
             <div className="graphSecondCanvasContainer">
                 <canvas ref={canvasRef} />
             </div>

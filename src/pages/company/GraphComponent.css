@@ -10,3 +10,9 @@
   width: 100%;
   height: 300px;
 }
+
+.graphEditControlsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}

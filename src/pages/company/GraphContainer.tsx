@@ -15,6 +15,7 @@ interface Props {
     isAddGraphPopupOn: boolean;
     setAddGraphPopupOn(isAddGraphPopupOn: boolean): void;
     addGraph(graph: Graph, index?: number): void;
+    deleteGraph(index: number): void;
 }
 
 const GraphContainer = (props: Props) => {
@@ -55,11 +56,13 @@ const GraphContainer = (props: Props) => {
                         {/* @ts-ignore // below dashboard is never undefined */}
                         {props.user.dashboard.graphs.map((graph: Graph, index: number) => {
                             return (
-                                <Draggable key={graph.id} draggableId={graph.id} index={index}>
+                                <Draggable key={graph.id} draggableId={graph.id} index={index}
+                                    isDragDisabled={!props.isEditModeOn}>
                                     {(provided) => (
                                         <GraphComponent graph={graph} isEditModeOn={props.isEditModeOn}
                                             setAddGraphPopupOn={props.setAddGraphPopupOn}
                                             setEditingGraphIndex={setEditingGraphIndex}
+                                            deleteGraph={props.deleteGraph}
                                             ref={provided.innerRef} provided={provided} index={index} />
                                     )}
                                 </Draggable>
