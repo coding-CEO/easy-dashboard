@@ -6,7 +6,6 @@ import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import { useState, useRef } from 'react';
 import { setTimeout } from 'timers';
 import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
-import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
 import { DraggableProvided } from 'react-beautiful-dnd';
 import { Button } from '@material-ui/core';
 
@@ -22,6 +21,8 @@ interface Props {
 const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
 
     const [graphData, setGraphData] = useState<{}[]>([]);
+    const [graphApiType, setGraphApiType] = useState(props.graph.apiType);
+    const [graphApiUrl, setGraphApiUrl] = useState('');
     const [graphInstance, setGraphInstance] = useState<Chart<keyof ChartTypeRegistry, {}[], unknown>>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -39,31 +40,33 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     const getGraphData = (): Promise<void> => {
         //TODO: complete this
         return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                setGraphData([{ xco: '5', yco: 5 }, { xco: '8', yco: 8 }, { xco: '9', yco: 9 },
-                { xco: '15', yco: 15 }]);
+            setTimeout(async () => {
+                setGraphData(await props.graph.fetchGraphData());
                 resolve();
             }, 2000);
         });
     }
 
     const renderGraph = (): void => {
+        if (!canvasRef.current) return;
         //@ts-ignore // nothing will be null/undefined because this is in componentDidMount()
         const canvasContext: CanvasRenderingContext2D = canvasRef.current.getContext('2d');
         if (!graphInstance)
             setGraphInstance(props.graph.generateGraph(canvasContext, graphData));
     }
 
-    // TODO: UPDATE iS not Visible and also API change Fetching should be there...
+    const getIsApiUpdated = (): boolean => {
+        return graphApiType !== props.graph.apiType || graphApiUrl !== props.graph.apiUrl;
+    }
+
     const updateGraph = (): void => {
         if (!graphInstance || graphData.length <= 0) return;
-        if (props.graph instanceof PieGraph) {
-            graphInstance.data.labels = props.graph.getLables(graphData);
-            graphInstance.data.datasets[0].data = props.graph.getData(graphData);
-        } else {
-            graphInstance.data.datasets[0].data = graphData;
+        const isApiUpdated = getIsApiUpdated();
+        if (isApiUpdated) {
+            setGraphApiType(props.graph.apiType);
+            setGraphApiUrl(props.graph.apiUrl);
         }
-        graphInstance.update();
+        props.graph.update(graphInstance, graphData, isApiUpdated);
     }
 
     const handleEditGraphClick = (): void => {

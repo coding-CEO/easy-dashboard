@@ -48,6 +48,25 @@ export class PieGraph extends Graph {
     });
   }
 
+  public update = async (
+    graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
+    graphData: {}[],
+    isApiUpdated: boolean
+  ): Promise<void> => {
+    if (!graphInstance) return;
+    graphInstance.config.type = "doughnut";
+    graphInstance.data.datasets[0].label = this.name;
+    graphInstance.data.datasets[0].backgroundColor = this.colorHex;
+    //@ts-ignore
+    graphInstance.config.options.cutout = this.innterRadiusPercent;
+    if (isApiUpdated) {
+      graphData = await this.fetchGraphData();
+    }
+    graphInstance.data.labels = this.getLables(graphData);
+    graphInstance.data.datasets[0].data = this.getData(graphData);
+    graphInstance.update();
+  };
+
   private generatePath = (pathLoc: string): string => {
     return "." + pathLoc;
   };

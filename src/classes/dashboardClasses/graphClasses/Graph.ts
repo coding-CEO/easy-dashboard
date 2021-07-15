@@ -28,8 +28,24 @@ export abstract class Graph {
     this.yCoordinatePath = yCoordinatePath;
   }
 
+  public fetchGraphData = async (): Promise<{}[]> => {
+    //TODO: fetch graph data from api
+    return [
+      { xco: "5", yco: 5 },
+      { xco: "8", yco: 8 },
+      { xco: "9", yco: 9 },
+      { xco: "15", yco: 15 },
+    ];
+  };
+
   public abstract generateGraph(
     canvasContext: CanvasRenderingContext2D,
     graphData: {}[]
   ): Chart<keyof ChartTypeRegistry, {}[], unknown>;
+
+  public abstract update(
+    graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
+    graphData: {}[],
+    isApiUpdated: boolean
+  ): Promise<void>;
 }

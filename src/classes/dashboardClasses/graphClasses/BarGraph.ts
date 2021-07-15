@@ -46,4 +46,23 @@ export class BarGraph extends Graph {
       },
     });
   }
+  public update = async (
+    graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
+    graphData: {}[],
+    isApiUpdated: boolean
+  ): Promise<void> => {
+    if (!graphInstance) return;
+    graphInstance.config.type = "bar";
+    graphInstance.data.datasets[0].label = this.name;
+    graphInstance.data.datasets[0].backgroundColor = this.colorHex;
+    //@ts-ignore
+    graphInstance.config.options.parsing.xAxisKey = this.xCoordinatePath;
+    //@ts-ignore
+    graphInstance.config.options.parsing.yAxisKey = this.yCoordinatePath;
+    if (isApiUpdated) {
+      graphData = await this.fetchGraphData();
+    }
+    graphInstance.data.datasets[0].data = graphData;
+    graphInstance.update();
+  };
 }
