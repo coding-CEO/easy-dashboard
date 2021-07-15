@@ -4,7 +4,7 @@ import App from './App';
 import LoadingPage from './pages/LoadingPage';
 
 const Main = () => {
-    const [isLoading, setLoading] = useState<Boolean>(true);
+    const [isLoading, setLoading] = useState<Boolean>(false);
     const handleSetLoading = (currIsLoading: Boolean): void => {
         if (isLoading === currIsLoading) return;
         setLoading(currIsLoading);

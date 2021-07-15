@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 import HomePage from './pages/HomePage';
@@ -7,7 +7,6 @@ import UserPage from './pages/user/UserPage';
 import NavigationBar from './components/NavigationBar';
 
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import { setTimeout } from 'timers';
 import { GuestUser } from './classes/GuestUser';
 import { LoginStatus } from './utils/enums';
 
@@ -17,26 +16,7 @@ interface Props {
 
 const App: React.FC<Props> = (props: Props) => {
 
-  const [guestUser, setGuestUser] = useState<GuestUser>();
-
-  const componentDidMount = async () => {
-    await setUserLoggedIn(setGuestUser);
-  }
-
-  useEffect(() => {
-    componentDidMount();
-  }, []);
-
-  const setUserLoggedIn = (setGuestUser: Function): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      //TODO: check user login here and return status.
-      setTimeout(() => {
-        setGuestUser(new GuestUser("abc@xyz.com"));
-        props.setLoading(false);
-        resolve(console.log("Logged in"));
-      }, 2000);
-    });
-  }
+  const [guestUser, setGuestUser] = useState<GuestUser>(new GuestUser(""));
 
   const getLoginStatus = (): LoginStatus => {
     if (guestUser) {

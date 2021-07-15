@@ -17,4 +17,12 @@ export class Dashboard {
     if (graphs) this.graphs = graphs;
     if (graphSequence) this.graphSequence = graphSequence;
   }
+
+  public sortGraphs = (): void => {
+    this.graphs.sort((a, b): number => {
+      if (this.graphSequence.indexOf(a.id) <= this.graphSequence.indexOf(b.id))
+        return -1;
+      return 0;
+    });
+  };
 }

@@ -16,6 +16,7 @@ interface Props {
     setAddGraphPopupOn(isAddGraphPopupOn: boolean): void;
     addGraph(graph: Graph, index?: number): void;
     deleteGraph(index: number): void;
+    setUser(user: User): void;
 }
 
 const GraphContainer = (props: Props) => {
@@ -48,7 +49,14 @@ const GraphContainer = (props: Props) => {
 
     return (
         <DragDropContext onDragEnd={(arg) => {
-            //TODO: handle drag drop logic
+            if (!arg.destination) return;
+            if (!props.user.dashboard) return;
+            //TODO: move this graph in database
+            let srcId = props.user.dashboard.graphSequence[arg.source.index];
+            props.user.dashboard.graphSequence.splice(arg.source.index, 1);
+            props.user.dashboard.graphSequence.splice(arg.destination.index, 0, srcId);
+            props.user.dashboard.sortGraphs();
+            props.setUser(props.user);
         }}>
             <Droppable droppableId="1">
                 {(provided) => (
