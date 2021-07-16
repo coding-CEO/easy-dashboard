@@ -15,6 +15,7 @@ import { DashboardList } from '../../classes/DashboardList';
 import { useHistory } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 import CreateDashboardDialogue from './CreateDashboardDialogue';
+import { BackendLocal } from '../../backendLocal/backendLocal';
 
 interface Props {
     guestUser: GuestUser;
@@ -28,24 +29,12 @@ const UserPage = (props: Props) => {
     const history = useHistory();
 
     const componentDidMount = async () => {
-        await getDashboards();
+        setDashboards(BackendLocal.getDashboards(props.guestUser.getEmail()));
     }
 
     useEffect(() => {
         componentDidMount();
     }, []);
-
-    const getDashboards = (): Promise<void> => {
-        //TODO: fetch here dashboards
-        return new Promise((resolve, reject): void => {
-            let data = [new DashboardList('1', 'A', Privilage.ADMIN),
-            new DashboardList('2', 'B', Privilage.USER)];
-            setTimeout(() => {
-                setDashboards(data);
-                resolve();
-            }, 2000);
-        });
-    }
 
     const goToCompany = (index: number): void => {
         history.push(`/company/${dashboards[index].getDashboardId()}`);
@@ -58,8 +47,8 @@ const UserPage = (props: Props) => {
     const handleDialogueClose = (dashboardName?: string) => {
         setOpenDialogue(false);
         if (dashboardName === undefined) return;
-        // TODO: Add the Dashboard to Database
-        let dashboard = new DashboardList(Number(dashboards.length + 1).toString(), dashboardName,
+        const dashboardId = BackendLocal.addDashboard(dashboardName, props.guestUser.getEmail());
+        let dashboard = new DashboardList(dashboardId, dashboardName,
             Privilage.ADMIN);
         setDashboards([...dashboards, dashboard]);
     }

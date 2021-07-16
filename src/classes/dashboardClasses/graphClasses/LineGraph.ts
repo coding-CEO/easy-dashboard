@@ -3,7 +3,7 @@ import { ApiType } from "../../../utils/enums";
 import { Graph } from "./Graph";
 
 export class LineGraph extends Graph {
-  public fill: boolean;
+  public fill: boolean = false;
   constructor(
     id: string,
     name: string,
@@ -12,7 +12,7 @@ export class LineGraph extends Graph {
     colorHex: string,
     xCoordinatePath: string,
     yCoordinatePath: string,
-    fill: boolean
+    fill?: boolean
   ) {
     super(
       id,
@@ -23,7 +23,7 @@ export class LineGraph extends Graph {
       xCoordinatePath,
       yCoordinatePath
     );
-    this.fill = fill;
+    if (fill) this.fill = fill;
   }
   public generateGraph(
     canvasContext: CanvasRenderingContext2D,
@@ -50,4 +50,28 @@ export class LineGraph extends Graph {
       },
     });
   }
+  public update = async (
+    graph: LineGraph,
+    graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
+    graphData: {}[],
+    isApiUpdated: boolean
+  ): Promise<void> => {
+    if (!graphInstance) return;
+    graphInstance.config.type = "line";
+    graphInstance.data.datasets[0].label = graph.name;
+    graphInstance.data.datasets[0].backgroundColor = graph.colorHex;
+    //@ts-ignore
+    graphInstance.data.datasets[0].fill = graph.fill;
+    graphInstance.config.options = {
+      parsing: {
+        xAxisKey: graph.xCoordinatePath,
+        yAxisKey: graph.yCoordinatePath,
+      },
+    };
+    if (isApiUpdated) {
+      graphData = await this.fetchGraphData(graph.apiUrl, graph.apiType);
+    }
+    graphInstance.data.datasets[0].data = graphData;
+    graphInstance.update();
+  };
 }

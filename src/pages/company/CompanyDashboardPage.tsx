@@ -4,15 +4,15 @@ import './CompanyDashboardPage.css'
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Admin } from '../../classes/dashboardClasses/Admin';
-import { Dashboard } from '../../classes/dashboardClasses/Dashboard';
 import { User } from '../../classes/dashboardClasses/User';
 import { GuestUser } from '../../classes/GuestUser';
-import { ApiType, Privilage } from '../../utils/enums';
+import { Privilage } from '../../utils/enums';
 import { Button, Divider, Drawer, FormControl, InputLabel, List, MenuItem, Select } from '@material-ui/core';
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
-import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
-import { BarGraph } from '../../classes/dashboardClasses/graphClasses/BarGraph';
+import CreateEmployeeDialogue from './CreateEmployeeDialogue';
+import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
+import { BackendLocal } from '../../backendLocal/backendLocal';
 
 interface Props {
     guestUser: GuestUser;
@@ -28,6 +28,8 @@ const CompanyDashboardPage = (props: Props) => {
     const [isEditModeOn, setEditModeOn] = useState(false);
     const [isEmployeesListOn, setEmployeesListOn] = useState(false);
     const [employees, setEmployees] = useState<Employee[]>([]);
+    const [isAddEmployeePopupOn, setAddEmployeePopupOn] = useState(false);
+    const [isAddGraphPopupOn, setAddGraphPopupOn] = useState(false);
 
     const params = useParams<ParamsProps>();
 
@@ -40,30 +42,25 @@ const CompanyDashboardPage = (props: Props) => {
     }, []);
 
     const setUserAuthorization = async () => {
-        // TODO: complete this.
-        // use companyID and props.guestUser.getEmail() to check if user is valid
-        // get the privilage of user
-
-        // if(not authorized) then => setUser(new User());
-
-        let privilage = Privilage.ADMIN;
-
-        // use company ID to get dashboard data mentioned in the dashboard class
-        await getDashboard(params.companyId);
-        let dashboard = new Dashboard('1', 'ABC Sales', [new LineGraph('1', "GName",
-            ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true), new BarGraph('2', "GName",
-                ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco'), new LineGraph('3', "GName",
-                    ApiType.REST, "fakeurl", "#fc4103", 'xco', 'yco', true)]);
-
+        const privilageNumber = BackendLocal.userPrivilage(params.companyId, props.guestUser.getEmail());
         //@ts-ignore
-        if (privilage === Privilage.ADMIN)
+        if (privilageNumber === -1) {
+            setUser(new User());
+            return;
+        }
+
+        const dashboard = BackendLocal.getDashboard(params.companyId);
+        if (!dashboard) {
+            setUser(new User());
+            return;
+        }
+
+        dashboard.sortGraphs();
+
+        if (privilageNumber === Privilage.ADMIN)
             setUser(new Admin(dashboard));
         else
             setUser(new User(dashboard));
-    }
-
-    const getDashboard = (companyId: string) => {
-        //TODO: complete this.
     }
 
     const handleEditModeButtonClick = (): void => {
@@ -81,38 +78,57 @@ const CompanyDashboardPage = (props: Props) => {
         let tempEmployees = employees.slice();
         switch (value) {
             case Privilage.ADMIN:
-                //TODO: make admin in database
+                BackendLocal.changeEmployee(params.companyId, tempEmployees[index].email, Privilage.ADMIN);
                 tempEmployees[index].privilage = Privilage.ADMIN;
                 break;
             case Privilage.USER:
-                //TODO: make user in database
+                BackendLocal.changeEmployee(params.companyId, tempEmployees[index].email, Privilage.USER);
                 tempEmployees[index].privilage = Privilage.USER;
                 break;
             default:
-                // remove from database
-                console.log('removed');
+                BackendLocal.removeEmployee(params.companyId, tempEmployees[index].email);
+                tempEmployees.splice(index, 1);
                 break;
         }
         setEmployees(tempEmployees);
     };
 
     const getEmployees = (): void => {
-        //TODO: complete this
-        setEmployees([new Employee('abc@gmail.com', Privilage.ADMIN),
-        new Employee('xyz@gmail.com', Privilage.USER)]);
+        setEmployees(BackendLocal.getEmployees(params.companyId));
+    }
+
+    const handleAddEmployeeClick = (): void => {
+        setAddEmployeePopupOn(!isAddEmployeePopupOn);
+    }
+
+    const handleAddEmployee = (employee?: Employee): void => {
+        setAddEmployeePopupOn(false);
+        if (employee === undefined) return;
+        BackendLocal.addEmployee(params.companyId, employee);
+        setEmployees([employee, ...employees]);
     }
 
     const getEmployeesListView = (): JSX.Element => {
         return (
             <div className="employeesListContainer">
-                <h3>Employees</h3>
+                <div style={{
+                    width: '100%', display: 'flex',
+                    alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                    <h3>Employees</h3>
+                    <Button variant="outlined" size="small" color="primary"
+                        onClick={handleAddEmployeeClick}>
+                        Add Employee
+                    </Button>
+                    <CreateEmployeeDialogue open={isAddEmployeePopupOn} onClose={handleAddEmployee} />
+                </div>
                 <Divider />
                 <List>
                     {employees.map((employee: Employee, index: number) => {
                         return (
                             <div className="listItem" key={employee.email}>
                                 <h5>{employee.email}</h5>
-                                <FormControl variant="outlined">
+                                {employee.email !== props.guestUser.getEmail() && <FormControl variant="outlined">
                                     <InputLabel id="demo-simple-select-outlined-label">Privilage</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-outlined-label"
@@ -128,17 +144,13 @@ const CompanyDashboardPage = (props: Props) => {
                                         <MenuItem value={Privilage.ADMIN}>ADMIN</MenuItem>
                                         <MenuItem value={Privilage.USER}>USER</MenuItem>
                                     </Select>
-                                </FormControl>
+                                </FormControl>}
                             </div>
                         )
                     })}
                 </List>
             </div>
         );
-    }
-
-    const handleGraphAdd = (): void => {
-        //TODO: complete add graph code...
     }
 
     const getEditControls = (): JSX.Element => {
@@ -151,7 +163,7 @@ const CompanyDashboardPage = (props: Props) => {
                 <Button variant="outlined" size="small" onClick={handleEmployeesButtonClick}>
                     Employees
                 </Button>
-                <Button variant="outlined" size="small" onClick={handleGraphAdd}>
+                <Button variant="outlined" size="small" onClick={() => setAddGraphPopupOn(true)}>
                     Add Graph
                 </Button>
                 <Drawer anchor="right" open={isEmployeesListOn} onClose={handleEmployeesButtonClick}>
@@ -159,6 +171,36 @@ const CompanyDashboardPage = (props: Props) => {
                 </Drawer>
             </div>
         );
+    }
+
+    const addGraph = (graph: Graph, index?: number): void => {
+        if (!user) return;
+        let temp_user: User = Object.create(user);
+        Object.assign(temp_user, user);
+        if (!temp_user.dashboard) return;
+        if (index !== undefined) {
+            // This is update
+            BackendLocal.updateGraph(params.companyId, graph, true)
+            temp_user.dashboard.graphs[index] = graph;
+        } else {
+            // This is Create
+            graph.id = BackendLocal.updateGraph(params.companyId, graph, false);
+            temp_user.dashboard.graphs = [graph, ...temp_user.dashboard.graphs];
+            temp_user.dashboard.graphSequence = [graph.id, ...temp_user.dashboard.graphSequence];
+        }
+        setUser(temp_user);
+    }
+
+    const deleteGraph = (index: number): void => {
+        if (!user) return;
+        let temp_user: User = Object.create(user);
+        Object.assign(temp_user, user);
+        if (!temp_user.dashboard) return;
+        const temp_graph = temp_user.dashboard.graphs[index];
+        temp_user.dashboard.graphs.splice(index, 1);
+        temp_user.dashboard.graphSequence.splice(temp_user.dashboard.graphSequence.indexOf(temp_graph.id), 1);
+        BackendLocal.deleteGraph(params.companyId, temp_graph.id);
+        setUser(temp_user);
     }
 
     const getUserView = (): JSX.Element => {
@@ -170,7 +212,9 @@ const CompanyDashboardPage = (props: Props) => {
                     {(user instanceof Admin) && getEditControls()}
                 </nav>
                 {/*@ts-ignore // user is never undefined below*/}
-                <GraphContainer user={user} isEditModeOn={isEditModeOn} />
+                <GraphContainer user={user} isEditModeOn={isEditModeOn} isAddGraphPopupOn={isAddGraphPopupOn}
+                    setAddGraphPopupOn={setAddGraphPopupOn} addGraph={addGraph} deleteGraph={deleteGraph}
+                    setUser={setUser} companyId={params.companyId} />
             </div>
         );
     }

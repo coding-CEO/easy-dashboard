@@ -1,9 +1,9 @@
 export class GuestUser {
-  private email: String;
-  constructor(newEmail: String) {
+  private email: string;
+  constructor(newEmail: string) {
     this.email = newEmail;
   }
-  public getEmail = (): String => {
+  public getEmail = (): string => {
     return this.email;
   };
 }
