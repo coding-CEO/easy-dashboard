@@ -34,12 +34,42 @@ export abstract class Graph {
   ): Promise<{}[]> => {
     //TODO: fetch graph data from api
     console.log(apiUrl, apiType);
-    return [
+
+    let data: {}[] = [
       { xco: "5", yco: 5 },
       { xco: "8", yco: 8 },
       { xco: "9", yco: 9 },
       { xco: "15", yco: 15 },
     ];
+
+    switch (apiType) {
+      case ApiType.REST:
+        data = await this.restFetch(apiUrl);
+        break;
+      case ApiType.SOAP:
+        data = await this.soapFetch(apiUrl);
+        break;
+      case ApiType.GRAPH_QL:
+        data = await this.graphQlFetch(apiUrl);
+        break;
+    }
+
+    return data;
+  };
+
+  private restFetch = (apiUrl: string): {}[] => {
+    //TODO: complete this now
+    throw new Error("Function not yet implemented");
+  };
+
+  private soapFetch = (apiUrl: string): {}[] => {
+    //TODO: complete this in future
+    throw new Error("Function not yet implemented");
+  };
+
+  private graphQlFetch = (apiUrl: string): {}[] => {
+    //TODO: complete this in future
+    throw new Error("Function not yet implemented");
   };
 
   public abstract generateGraph(
