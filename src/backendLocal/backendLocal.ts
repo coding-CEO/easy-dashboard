@@ -246,12 +246,12 @@ export class BackendLocal {
     let mainArray = BackendLocal.getItem();
     graph.id = isUpdate ? graph.id : uuid();
     let jsonGraph = {
-      type: -1,
+      type: 0,
     };
     Object.assign(jsonGraph, JSON.parse(JSON.stringify(graph)));
     if (graph instanceof LineGraph) jsonGraph.type = GraphType.LINE;
-    if (graph instanceof BarGraph) jsonGraph.type = GraphType.BAR;
-    if (graph instanceof PieGraph) jsonGraph.type = GraphType.PIE;
+    else if (graph instanceof BarGraph) jsonGraph.type = GraphType.BAR;
+    else if (graph instanceof PieGraph) jsonGraph.type = GraphType.PIE;
     try {
       for (let dashboard of mainArray) {
         //@ts-ignore

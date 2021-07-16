@@ -1,5 +1,6 @@
 import { Chart, ChartTypeRegistry } from "chart.js";
 import { ApiType } from "../../../utils/enums";
+import axios from "axios";
 
 export abstract class Graph {
   public id: string;
@@ -32,15 +33,7 @@ export abstract class Graph {
     apiUrl: string,
     apiType: ApiType
   ): Promise<{}[]> => {
-    //TODO: fetch graph data from api
-    console.log(apiUrl, apiType);
-
-    let data: {}[] = [
-      { xco: "5", yco: 5 },
-      { xco: "8", yco: 8 },
-      { xco: "9", yco: 9 },
-      { xco: "15", yco: 15 },
-    ];
+    let data: {}[] = [];
 
     switch (apiType) {
       case ApiType.REST:
@@ -57,9 +50,10 @@ export abstract class Graph {
     return data;
   };
 
-  private restFetch = (apiUrl: string): {}[] => {
-    //TODO: complete this now
-    throw new Error("Function not yet implemented");
+  private restFetch = async (apiUrl: string): Promise<{}[]> => {
+    let data: {} = await axios.get(apiUrl);
+    //@ts-ignore
+    return data.data;
   };
 
   private soapFetch = (apiUrl: string): {}[] => {

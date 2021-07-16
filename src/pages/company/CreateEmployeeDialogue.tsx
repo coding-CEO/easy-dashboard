@@ -3,7 +3,7 @@ import * as React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import { Button, DialogActions, DialogContent, FormControl, Input, InputLabel, MenuItem, Select } from '@material-ui/core';
+import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { useState } from 'react';
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import { Privilage } from '../../utils/enums';

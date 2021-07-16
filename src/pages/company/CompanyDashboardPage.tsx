@@ -4,21 +4,15 @@ import './CompanyDashboardPage.css'
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Admin } from '../../classes/dashboardClasses/Admin';
-import { Dashboard } from '../../classes/dashboardClasses/Dashboard';
 import { User } from '../../classes/dashboardClasses/User';
 import { GuestUser } from '../../classes/GuestUser';
-import { ApiType, Privilage } from '../../utils/enums';
+import { Privilage } from '../../utils/enums';
 import { Button, Divider, Drawer, FormControl, InputLabel, List, MenuItem, Select } from '@material-ui/core';
 import { Employee } from '../../classes/dashboardClasses/Employee';
 import GraphContainer from './GraphContainer';
-import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
-import { BarGraph } from '../../classes/dashboardClasses/graphClasses/BarGraph';
 import CreateEmployeeDialogue from './CreateEmployeeDialogue';
-import CreateGraphDialogue from './CreateGraphDialogue';
 import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
-import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
 import { BackendLocal } from '../../backendLocal/backendLocal';
-import { v4 as uuid } from 'uuid';
 
 interface Props {
     guestUser: GuestUser;
@@ -67,7 +61,6 @@ const CompanyDashboardPage = (props: Props) => {
             setUser(new Admin(dashboard));
         else
             setUser(new User(dashboard));
-        console.log('userlaksdka', dashboard);
     }
 
     const handleEditModeButtonClick = (): void => {

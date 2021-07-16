@@ -5,7 +5,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import { Button, Checkbox, DialogActions, DialogContent, FormControl, FormControlLabel, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { useState } from 'react';
-import { ChromePicker, Color } from 'react-color';
+import { ChromePicker } from 'react-color';
 import { ApiType, GraphType } from '../../utils/enums';
 import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import { LineGraph } from '../../classes/dashboardClasses/graphClasses/LineGraph';
@@ -221,7 +221,9 @@ const CreateGraphDialogue = (props: Props) => {
                             label="API Type"
                         >
                             <MenuItem value={ApiType.REST}>REST</MenuItem>
-                            <MenuItem value={ApiType.SOAP}>SOAP</MenuItem>
+                            {/* TODO: add these apis in future */}
+                            {/* <MenuItem value={ApiType.SOAP}>SOAP</MenuItem>
+                            <MenuItem value={ApiType.GRAPH_QL}>GRAPH_QL</MenuItem> */}
                         </Select>
                     </FormControl>
 

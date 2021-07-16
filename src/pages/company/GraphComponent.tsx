@@ -4,10 +4,9 @@ import './GraphComponent.css';
 import { useEffect } from 'react';
 import { Graph } from '../../classes/dashboardClasses/graphClasses/Graph';
 import { useState, useRef } from 'react';
-import { setTimeout } from 'timers';
 import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
 import { DraggableProvided } from 'react-beautiful-dnd';
-import { Button, IconButton } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AlertDialogue from '../../components/AlertDialogue';
@@ -26,7 +25,9 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
 
     const [graphData, setGraphData] = useState<{}[]>([]);
     const [graphApiType, setGraphApiType] = useState(props.graph.apiType);
-    const [graphApiUrl, setGraphApiUrl] = useState('');
+    const [graphApiUrl, setGraphApiUrl] = useState(props.graph.apiUrl);
+    const [graphXCoordinate, setGraphXCoordinate] = useState(props.graph.xCoordinatePath);
+    const [graphYCoordinate, setGraphYCoordinate] = useState(props.graph.yCoordinatePath);
     const [graphInstance, setGraphInstance] = useState<Chart<keyof ChartTypeRegistry, {}[], unknown>>();
     const [isDeleteDialogueOpen, setDeleteDialogueOpen] = useState(false);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -55,7 +56,8 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     }
 
     const getIsApiUpdated = (): boolean => {
-        return graphApiType !== props.graph.apiType || graphApiUrl !== props.graph.apiUrl;
+        return graphApiType !== props.graph.apiType || graphApiUrl !== props.graph.apiUrl ||
+            graphXCoordinate !== props.graph.xCoordinatePath || graphYCoordinate !== props.graph.yCoordinatePath;
     }
 
     const updateGraph = (): void => {
@@ -64,6 +66,8 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
         if (isApiUpdated) {
             setGraphApiType(props.graph.apiType);
             setGraphApiUrl(props.graph.apiUrl);
+            setGraphXCoordinate(props.graph.xCoordinatePath);
+            setGraphYCoordinate(props.graph.yCoordinatePath);
         }
         props.graph.update(props.graph, graphInstance, graphData, isApiUpdated);
     }

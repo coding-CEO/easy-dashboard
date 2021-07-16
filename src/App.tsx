@@ -16,8 +16,7 @@ interface Props {
 
 const App: React.FC<Props> = (props: Props) => {
 
-  //TODO: remove this state email later
-  const [guestUser, setGuestUser] = useState<GuestUser>(new GuestUser("pratik@gmail.com"));
+  const [guestUser, setGuestUser] = useState<GuestUser>(new GuestUser(""));
 
   const getLoginStatus = (): LoginStatus => {
     if (guestUser) {
