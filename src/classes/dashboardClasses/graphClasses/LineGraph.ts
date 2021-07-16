@@ -12,6 +12,7 @@ export class LineGraph extends Graph {
     colorHex: string,
     xCoordinatePath: string,
     yCoordinatePath: string,
+    dataPath: string,
     fill?: boolean
   ) {
     super(
@@ -21,7 +22,8 @@ export class LineGraph extends Graph {
       apiUrl,
       colorHex,
       xCoordinatePath,
-      yCoordinatePath
+      yCoordinatePath,
+      dataPath
     );
     if (fill) this.fill = fill;
   }
@@ -69,7 +71,11 @@ export class LineGraph extends Graph {
       },
     };
     if (isApiUpdated) {
-      graphData = await this.fetchGraphData(graph.apiUrl, graph.apiType);
+      graphData = await this.fetchGraphData(
+        graph.apiUrl,
+        graph.apiType,
+        graph.dataPath
+      );
     }
     graphInstance.data.datasets[0].data = graphData;
     graphInstance.update();

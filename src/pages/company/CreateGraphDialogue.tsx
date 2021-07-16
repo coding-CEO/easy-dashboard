@@ -21,13 +21,13 @@ interface Props {
 
 const CreateGraphDialogue = (props: Props) => {
 
-    const [graph, setGraph] = useState<Graph>(new LineGraph(props.fakeId, "", ApiType.REST, "", '#f1a135', '', ''));
+    const [graph, setGraph] = useState<Graph>(new LineGraph(props.fakeId, "", ApiType.REST, "", '#f1a135', '', '', ''));
     const [graphType, setGraphType] = useState<GraphType>(GraphType.LINE);
 
     const handleClose = (isComplete?: boolean) => {
         let temp_graph = graph;
         let temp_graph_type = graphType;
-        setGraph(new LineGraph(props.fakeId, "", ApiType.REST, "", '#f1a135', '', ''));
+        setGraph(new LineGraph(props.fakeId, "", ApiType.REST, "", '#f1a135', '', '', ''));
         setGraphType(GraphType.LINE);
         if (isComplete)
             props.onClose(temp_graph, temp_graph_type);
@@ -54,9 +54,9 @@ const CreateGraphDialogue = (props: Props) => {
         apiUrl: string,
         colorHex: string,
         xCoordinatePath: string,
-        yCoordinatePath: string) => Graph): Graph => {
+        yCoordinatePath: string, dataPath: string) => Graph): Graph => {
         return new Graph(graph.id, graph.name, graph.apiType, graph.apiUrl, graph.colorHex,
-            graph.xCoordinatePath, graph.yCoordinatePath);
+            graph.xCoordinatePath, graph.yCoordinatePath, graph.dataPath);
     }
 
     const setGraphTypeCustom = (newGraphType: GraphType): void => {
@@ -235,7 +235,15 @@ const CreateGraphDialogue = (props: Props) => {
                             setGraph(temp_graph);
                         }} defaultValue={graph.apiUrl} required fullWidth />
 
-                    <TextField className="input" label="x-coordinate Variable Path in API" variant="outlined"
+                    <TextField className="input" label="Data Array Path in API (optional)" variant="outlined"
+                        style={{ marginBottom: '15px' }} type="text" onChange={(input) => {
+                            input.target.value = input.target.value.trim();
+                            let temp_graph = graph;
+                            temp_graph.dataPath = input.target.value;
+                            setGraph(temp_graph);
+                        }} defaultValue={graph.dataPath} fullWidth />
+
+                    <TextField className="input" label="x-coordinate Variable Path in Data" variant="outlined"
                         style={{ marginBottom: '15px' }} type="text" onChange={(input) => {
                             input.target.value = input.target.value.trim();
                             let temp_graph = graph;
@@ -243,7 +251,7 @@ const CreateGraphDialogue = (props: Props) => {
                             setGraph(temp_graph);
                         }} defaultValue={graph.xCoordinatePath} required fullWidth />
 
-                    <TextField className="input" label="y-coordinate Variable Path in API" variant="outlined"
+                    <TextField className="input" label="y-coordinate Variable Path in Data" variant="outlined"
                         style={{ marginBottom: '15px' }} type="text" onChange={(input) => {
                             input.target.value = input.target.value.trim();
                             let temp_graph = graph;

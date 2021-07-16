@@ -47,7 +47,8 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     }, []);
 
     const getGraphData = async (): Promise<void> => {
-        setGraphData(await props.graph.fetchGraphData(props.graph.apiUrl, props.graph.apiType));
+        setGraphData(await props.graph.fetchGraphData(props.graph.apiUrl, props.graph.apiType,
+            props.graph.dataPath));
     }
 
     const renderGraph = (): void => {
@@ -64,7 +65,7 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     }
 
     const updateGraph = (): void => {
-        if (!graphInstance || graphData.length <= 0) return;
+        if (!graphInstance || !graphData || graphData.length <= 0) return;
         const isApiUpdated = getIsApiUpdated();
         if (isApiUpdated) {
             setGraphApiType(props.graph.apiType);
@@ -110,19 +111,23 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
         if (!graphInstance) return;
         const fileName: string = props.graph.name;
         const exportType = exportFromJSON.types.csv;
-        if (props.graph instanceof PieGraph) {
-            if (!graphInstance.data.labels) return;
-            let data: {}[] = [];
-            for (let i = 0; i < graphInstance.data.labels.length; i++) {
-                data.push({
-                    key: graphInstance.data.labels[i],
-                    value: graphInstance.data.datasets[0].data[i],
-                });
+        try {
+            if (props.graph instanceof PieGraph) {
+                if (!graphInstance.data.labels) return;
+                let data: {}[] = [];
+                for (let i = 0; i < graphInstance.data.labels.length; i++) {
+                    data.push({
+                        key: graphInstance.data.labels[i],
+                        value: graphInstance.data.datasets[0].data[i],
+                    });
+                }
+                exportFromJSON({ data, fileName, exportType });
+            } else {
+                let data = graphInstance.data.datasets[0].data;
+                exportFromJSON({ data, fileName, exportType });
             }
-            exportFromJSON({ data, fileName, exportType });
-        } else {
-            let data = graphInstance.data.datasets[0].data;
-            exportFromJSON({ data, fileName, exportType });
+        } catch (error) {
+            console.error(error);
         }
     }
 

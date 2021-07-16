@@ -10,7 +10,8 @@ export class BarGraph extends Graph {
     apiUrl: string,
     colorHex: string,
     xCoordinatePath: string,
-    yCoordinatePath: string
+    yCoordinatePath: string,
+    dataPath: string
   ) {
     super(
       id,
@@ -19,7 +20,8 @@ export class BarGraph extends Graph {
       apiUrl,
       colorHex,
       xCoordinatePath,
-      yCoordinatePath
+      yCoordinatePath,
+      dataPath
     );
   }
   public generateGraph(
@@ -63,7 +65,11 @@ export class BarGraph extends Graph {
       },
     };
     if (isApiUpdated) {
-      graphData = await this.fetchGraphData(graph.apiUrl, graph.apiType);
+      graphData = await this.fetchGraphData(
+        graph.apiUrl,
+        graph.apiType,
+        graph.dataPath
+      );
     }
     graphInstance.data.datasets[0].data = graphData;
     graphInstance.update();
