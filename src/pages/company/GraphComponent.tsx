@@ -9,7 +9,9 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import GetAppIcon from '@material-ui/icons/GetApp'
 import AlertDialogue from '../../components/AlertDialogue';
+import exportFromJSON from 'export-from-json'
 
 interface Props {
     graph: Graph;
@@ -89,7 +91,7 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
 
     const getEditControls = (): JSX.Element => {
         return (
-            <div className="graphEditControlsContainer">
+            <React.Fragment>
                 <IconButton aria-label="edit" color="primary"
                     onClick={handleEditGraphClick}>
                     <EditIcon />
@@ -99,14 +101,29 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
                 </IconButton>
                 <AlertDialogue open={isDeleteDialogueOpen} title={"Want to Delete this Graph ?"}
                     onClose={handleGraphDelete} />
-            </div>
+            </React.Fragment>
         );
+    }
+
+    const handleDownloadGraphClick = (): void => {
+        if (!graphInstance) return;
+        let data = graphInstance.data.datasets[0].data;
+        const fileName: string = props.graph.name;
+        const exportType = exportFromJSON.types.csv;
+        exportFromJSON({ data, fileName, exportType });
     }
 
     return (
         <div className="graphCanvasContainer" ref={ref} {...props.provided.draggableProps}
             {...props.provided.dragHandleProps}>
-            {props.isEditModeOn && getEditControls()}
+
+            <div className="graphEditControlsContainer">
+                {props.isEditModeOn && getEditControls()}
+                <IconButton aria-label="edit" color="primary"
+                    onClick={handleDownloadGraphClick}>
+                    <GetAppIcon />
+                </IconButton>
+            </div>
             <div className="graphSecondCanvasContainer">
                 <canvas ref={canvasRef} />
             </div>
