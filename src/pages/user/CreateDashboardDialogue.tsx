@@ -17,32 +17,31 @@ const CreateDashboardDialogue = (props: Props) => {
     const [error, setError] = useState(false);
     const [errorText, setErrorText] = useState('');
 
-    const handleClose = () => {
-        let DashName = dashboardName;
+    const handleClose = (isSubmit: boolean) => {
+        let DashName = dashboardName.trim();
         setError(false);
         setErrorText("");
         setDashboardName("");
 
-        if (DashName.length > 0)
+        if (DashName.length > 0 && isSubmit)
             props.onClose(DashName);
         else
             props.onClose();
     }
 
     return (
-        <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={props.open}>
+        <Dialog onClose={() => handleClose(false)} aria-labelledby="simple-dialog-title" open={props.open}>
             <DialogTitle id="simple-dialog-title">Create Your Dashboard</DialogTitle>
             <DialogContent>
                 <TextField className="input" label="Dashboard Name" variant="outlined"
                     style={{ marginBottom: '15px' }} type="text" onChange={(input) => {
-                        input.target.value = input.target.value.trim();
                         setDashboardName(input.target.value);
                         setError(false);
                         setErrorText('');
                     }} required error={error} helperText={errorText} fullWidth />
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>
+                <Button onClick={() => handleClose(false)}>
                     Cancel
                 </Button>
                 <Button type="submit" onClick={() => {
@@ -51,7 +50,7 @@ const CreateDashboardDialogue = (props: Props) => {
                         setErrorText("Please Enter a Name");
                         return;
                     }
-                    handleClose();
+                    handleClose(true);
                 }} color="primary">
                     Create
                 </Button>

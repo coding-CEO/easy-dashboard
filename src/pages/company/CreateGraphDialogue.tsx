@@ -77,7 +77,8 @@ const CreateGraphDialogue = (props: Props) => {
     }
 
     const getLineView = (): JSX.Element => {
-        let temp_graph: LineGraph = Object.create(graph as LineGraph);
+        let temp_graph: LineGraph = Object.create(graph);
+        Object.assign(temp_graph, graph);
         return (
             <FormControlLabel
                 control={
@@ -103,19 +104,20 @@ const CreateGraphDialogue = (props: Props) => {
     }
 
     const getPieView = (): JSX.Element => {
-        let temp_graph = graph as PieGraph;
+        // let temp_graph = graph as PieGraph;
         return (
-            <TextField className="input" label="Inner Radius Percentage (0% - 99%)" variant="outlined"
-                style={{ marginBottom: '15px' }} type="number" onChange={(input) => {
-                    let val = Number(input.target.value);
-                    if (val < 0 || val > 99) {
-                        input.target.value = '0';
-                        temp_graph.innterRadiusPercent = 0;
-                    } else {
-                        temp_graph.innterRadiusPercent = val;
-                    }
-                    setGraph(temp_graph);
-                }} defaultValue={temp_graph.innterRadiusPercent} required fullWidth />
+            <React.Fragment>.</React.Fragment>
+            // <TextField className="input" label="Inner Radius Percentage (0% - 99%)" variant="outlined"
+            //     style={{ marginBottom: '15px' }} type="number" onChange={(input) => {
+            //         let val = Number(input.target.value);
+            //         if (val < 0 || val > 99) {
+            //             input.target.value = '0';
+            //             temp_graph.innterRadiusPercent = 0;
+            //         } else {
+            //             temp_graph.innterRadiusPercent = val;
+            //         }
+            //         setGraph(temp_graph);
+            //     }} defaultValue={temp_graph.innterRadiusPercent} required fullWidth />
         );
     }
 
@@ -183,7 +185,8 @@ const CreateGraphDialogue = (props: Props) => {
                         control={
                             <div style={{ marginBottom: '15px', marginLeft: '15px' }}>
                                 <ChromePicker color={graph.colorHex} onChange={(color) => {
-                                    let temp_graph = Object.create(graph);
+                                    let temp_graph: Graph = Object.create(graph);
+                                    Object.assign(temp_graph, graph);
                                     temp_graph.colorHex = color.hex;
                                     setGraph(temp_graph);
                                 }} />
@@ -200,7 +203,8 @@ const CreateGraphDialogue = (props: Props) => {
                             id="demo-simple-select-outlined"
                             value={graph.apiType}
                             onChange={(input) => {
-                                let temp_graph = Object.create(graph);
+                                let temp_graph: Graph = Object.create(graph);
+                                Object.assign(temp_graph, graph);
                                 let val = Number(input.target.value);
                                 switch (val) {
                                     case ApiType.REST:

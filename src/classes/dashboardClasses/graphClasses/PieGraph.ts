@@ -32,68 +32,85 @@ export class PieGraph extends Graph {
     return new Chart(canvasContext, {
       type: "doughnut",
       data: {
-        labels: this.getLables(graphData),
+        labels: this.getLables(graphData, this.xCoordinatePath),
         datasets: [
           {
             label: this.name,
-            data: this.getData(graphData),
+            data: this.getData(graphData, this.yCoordinatePath),
             backgroundColor: this.colorHex,
           },
         ],
       },
       options: {
         maintainAspectRatio: false,
-        cutout: this.innterRadiusPercent,
+        // cutout: this.innterRadiusPercent,
       },
     });
   }
 
   public update = async (
+    graph: PieGraph,
     graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
     graphData: {}[],
     isApiUpdated: boolean
   ): Promise<void> => {
     if (!graphInstance) return;
     graphInstance.config.type = "doughnut";
-    graphInstance.data.datasets[0].label = this.name;
-    graphInstance.data.datasets[0].backgroundColor = this.colorHex;
-    //@ts-ignore
-    graphInstance.config.options.cutout = this.innterRadiusPercent;
+    graphInstance.data.datasets[0].label = graph.name;
+    graphInstance.data.datasets[0].backgroundColor = graph.colorHex;
+    graphInstance.config.options = {
+      //@ts-ignore
+      cutout: `${graph.innterRadiusPercent}%`,
+    };
     if (isApiUpdated) {
-      graphData = await this.fetchGraphData();
+      graphData = await this.fetchGraphData(graph.apiUrl, graph.apiType);
     }
-    graphInstance.data.labels = this.getLables(graphData);
-    graphInstance.data.datasets[0].data = this.getData(graphData);
+    graphInstance.data.labels = this.getLables(
+      graphData,
+      graph.xCoordinatePath
+    );
+    graphInstance.data.datasets[0].data = this.getData(
+      graphData,
+      graph.yCoordinatePath
+    );
+
     graphInstance.update();
   };
 
-  private generatePath = (pathLoc: string): string => {
-    return "." + pathLoc;
+  private getObjectData = (o: {}, s: string): any => {
+    s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
+    s = s.replace(/^\./, ""); // strip a leading dot
+    let a: string[] = s.split(".");
+    for (let k of a) {
+      //@ts-ignore
+      o = o[k];
+    }
+    return o;
   };
 
-  public getLables = (graphData: {}[]): string[] => {
+  public getLables = (graphData: {}[], xpath: string): string[] => {
     if (graphData.length <= 0) return [];
     let lables: string[] = [];
-    let xpath = this.generatePath(this.xCoordinatePath);
     try {
       for (let data of graphData) {
-        lables.push(eval("data" + xpath));
+        lables.push(this.getObjectData(data, xpath));
       }
     } catch (error) {
+      console.error(error, lables);
       return [];
     }
     return lables;
   };
 
-  public getData = (graphData: {}[]): number[] => {
+  public getData = (graphData: {}[], ypath: string): number[] => {
     if (graphData.length <= 0) return [];
     let datas: number[] = [];
-    let ypath = this.generatePath(this.yCoordinatePath);
     try {
       for (let data of graphData) {
-        datas.push(eval("data" + ypath));
+        datas.push(this.getObjectData(data, ypath));
       }
     } catch (error) {
+      console.error(error);
       return [];
     }
     return datas;

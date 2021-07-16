@@ -8,9 +8,11 @@ import CreateGraphDialogue from './CreateGraphDialogue';
 import { GraphType } from '../../utils/enums';
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { BackendLocal } from '../../backendLocal/backendLocal';
 
 interface Props {
     user: User;
+    companyId: string;
     isEditModeOn: boolean;
     isAddGraphPopupOn: boolean;
     setAddGraphPopupOn(isAddGraphPopupOn: boolean): void;
@@ -31,10 +33,8 @@ const GraphContainer = (props: Props) => {
         setEditingGraphIndex(-1);
         if (!graph || graphType === undefined) return;
         if (graph.id === fakeId) {
-            console.log('new graph creating');
             props.addGraph(graph);
         } else {
-            console.log('old graph editing');
             props.addGraph(graph, index);
         }
     }
@@ -51,10 +51,10 @@ const GraphContainer = (props: Props) => {
         <DragDropContext onDragEnd={(arg) => {
             if (!arg.destination) return;
             if (!props.user.dashboard) return;
-            //TODO: move this graph in database
             let srcId = props.user.dashboard.graphSequence[arg.source.index];
             props.user.dashboard.graphSequence.splice(arg.source.index, 1);
             props.user.dashboard.graphSequence.splice(arg.destination.index, 0, srcId);
+            BackendLocal.moveGraphs(props.companyId, props.user.dashboard.graphSequence);
             props.user.dashboard.sortGraphs();
             props.setUser(props.user);
         }}>

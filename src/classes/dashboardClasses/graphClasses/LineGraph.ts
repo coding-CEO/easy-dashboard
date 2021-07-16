@@ -51,24 +51,25 @@ export class LineGraph extends Graph {
     });
   }
   public update = async (
+    graph: LineGraph,
     graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
     graphData: {}[],
     isApiUpdated: boolean
   ): Promise<void> => {
     if (!graphInstance) return;
     graphInstance.config.type = "line";
-    graphInstance.data.datasets[0].label = this.name;
-    graphInstance.data.datasets[0].backgroundColor = this.colorHex;
+    graphInstance.data.datasets[0].label = graph.name;
+    graphInstance.data.datasets[0].backgroundColor = graph.colorHex;
     //@ts-ignore
-    graphInstance.data.datasets[0].fill = this.fill;
+    graphInstance.data.datasets[0].fill = graph.fill;
     graphInstance.config.options = {
       parsing: {
-        xAxisKey: this.xCoordinatePath,
-        yAxisKey: this.yCoordinatePath,
+        xAxisKey: graph.xCoordinatePath,
+        yAxisKey: graph.yCoordinatePath,
       },
     };
     if (isApiUpdated) {
-      graphData = await this.fetchGraphData();
+      graphData = await this.fetchGraphData(graph.apiUrl, graph.apiType);
     }
     graphInstance.data.datasets[0].data = graphData;
     graphInstance.update();

@@ -28,8 +28,12 @@ export abstract class Graph {
     this.yCoordinatePath = yCoordinatePath;
   }
 
-  public fetchGraphData = async (): Promise<{}[]> => {
+  public fetchGraphData = async (
+    apiUrl: string,
+    apiType: ApiType
+  ): Promise<{}[]> => {
     //TODO: fetch graph data from api
+    console.log(apiUrl, apiType);
     return [
       { xco: "5", yco: 5 },
       { xco: "8", yco: 8 },
@@ -44,6 +48,7 @@ export abstract class Graph {
   ): Chart<keyof ChartTypeRegistry, {}[], unknown>;
 
   public abstract update(
+    graph: Graph,
     graphInstance: Chart<keyof ChartTypeRegistry, {}[], unknown>,
     graphData: {}[],
     isApiUpdated: boolean

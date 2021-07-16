@@ -15,7 +15,7 @@ interface Props {
 
 const CreateEmployeeDialogue = (props: Props) => {
 
-    const [employee, setEmployee] = useState<Employee>(new Employee("", Privilage.ADMIN));
+    const [employee, setEmployee] = useState<Employee>(new Employee("", Privilage.USER));
     const [privilage, setPrivilage] = useState<Privilage>(Privilage.USER);
 
     const handleClose = (isComplete?: boolean) => {

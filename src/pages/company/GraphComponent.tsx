@@ -34,22 +34,16 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     Chart.register(...registerables);
 
     const componentDidMount = async () => {
-        await getGraphData();
         renderGraph();
+        await getGraphData();
     }
 
     useEffect(() => {
         componentDidMount();
     }, []);
 
-    const getGraphData = (): Promise<void> => {
-        //TODO: complete this
-        return new Promise((resolve, reject) => {
-            setTimeout(async () => {
-                setGraphData(await props.graph.fetchGraphData());
-                resolve();
-            }, 2000);
-        });
+    const getGraphData = async (): Promise<void> => {
+        setGraphData(await props.graph.fetchGraphData(props.graph.apiUrl, props.graph.apiType));
     }
 
     const renderGraph = (): void => {
@@ -71,7 +65,7 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
             setGraphApiType(props.graph.apiType);
             setGraphApiUrl(props.graph.apiUrl);
         }
-        props.graph.update(graphInstance, graphData, isApiUpdated);
+        props.graph.update(props.graph, graphInstance, graphData, isApiUpdated);
     }
 
     const handleEditGraphClick = (): void => {
