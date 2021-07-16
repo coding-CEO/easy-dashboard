@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 import HomePage from './pages/HomePage';
@@ -16,7 +16,25 @@ interface Props {
 
 const App: React.FC<Props> = (props: Props) => {
 
-  const [guestUser, setGuestUser] = useState<GuestUser>(new GuestUser(""));
+  const userKey = 'user';
+  const [guestUser, setGuestUser] = useState<GuestUser>();
+
+  const componentDidMount = async () => {
+    authenticate();
+  }
+
+  useEffect(() => {
+    componentDidMount();
+  }, []);
+
+  const authenticate = (): void => {
+    let userItemString = localStorage.getItem(userKey);
+    if (!userItemString) setGuestUser(new GuestUser(''));
+    else {
+      let userItem = JSON.parse(userItemString);
+      setGuestUser(new GuestUser(userItem.email));
+    }
+  }
 
   const getLoginStatus = (): LoginStatus => {
     if (guestUser) {

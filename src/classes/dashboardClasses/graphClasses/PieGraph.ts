@@ -12,6 +12,7 @@ export class PieGraph extends Graph {
     colorHex: string,
     xCoordinatePath: string,
     yCoordinatePath: string,
+    dataPath: string,
     innerRadiusPercent?: number
   ) {
     super(
@@ -21,7 +22,8 @@ export class PieGraph extends Graph {
       apiUrl,
       colorHex,
       xCoordinatePath,
-      yCoordinatePath
+      yCoordinatePath,
+      dataPath
     );
     if (innerRadiusPercent) this.innterRadiusPercent = innerRadiusPercent;
   }
@@ -63,7 +65,11 @@ export class PieGraph extends Graph {
       cutout: `${graph.innterRadiusPercent}%`,
     };
     if (isApiUpdated) {
-      graphData = await this.fetchGraphData(graph.apiUrl, graph.apiType);
+      graphData = await this.fetchGraphData(
+        graph.apiUrl,
+        graph.apiType,
+        graph.dataPath
+      );
     }
     graphInstance.data.labels = this.getLables(
       graphData,
@@ -75,17 +81,6 @@ export class PieGraph extends Graph {
     );
 
     graphInstance.update();
-  };
-
-  private getObjectData = (o: {}, s: string): any => {
-    s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
-    s = s.replace(/^\./, ""); // strip a leading dot
-    let a: string[] = s.split(".");
-    for (let k of a) {
-      //@ts-ignore
-      o = o[k];
-    }
-    return o;
   };
 
   public getLables = (graphData: {}[], xpath: string): string[] => {

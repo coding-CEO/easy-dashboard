@@ -14,6 +14,8 @@ const HomePage = (props: Props) => {
 
     const handleLogin = (e: any) => {
         e.preventDefault();
+        let user = { email: emailField }
+        localStorage.setItem('user', JSON.stringify(user));
         props.setGuestUser(new GuestUser(emailField));
     }
 

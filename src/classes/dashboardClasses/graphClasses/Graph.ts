@@ -10,6 +10,7 @@ export abstract class Graph {
   public colorHex: string;
   public xCoordinatePath: string;
   public yCoordinatePath: string;
+  public dataPath: string;
 
   constructor(
     id: string,
@@ -18,7 +19,8 @@ export abstract class Graph {
     apiUrl: string,
     colorHex: string,
     xCoordinatePath: string,
-    yCoordinatePath: string
+    yCoordinatePath: string,
+    dataPath: string
   ) {
     this.id = id;
     this.name = name;
@@ -27,17 +29,19 @@ export abstract class Graph {
     this.colorHex = colorHex;
     this.xCoordinatePath = xCoordinatePath;
     this.yCoordinatePath = yCoordinatePath;
+    this.dataPath = dataPath;
   }
 
   public fetchGraphData = async (
     apiUrl: string,
-    apiType: ApiType
+    apiType: ApiType,
+    dataPath: string
   ): Promise<{}[]> => {
     let data: {}[] = [];
 
     switch (apiType) {
       case ApiType.REST:
-        data = await this.restFetch(apiUrl);
+        data = await this.restFetch(apiUrl, dataPath);
         break;
       case ApiType.SOAP:
         data = await this.soapFetch(apiUrl);
@@ -50,10 +54,14 @@ export abstract class Graph {
     return data;
   };
 
-  private restFetch = async (apiUrl: string): Promise<{}[]> => {
+  private restFetch = async (
+    apiUrl: string,
+    dataPath: string
+  ): Promise<{}[]> => {
     let data: {} = await axios.get(apiUrl);
+    //TODO: fetch data path here
     //@ts-ignore
-    return data.data;
+    return this.getObjectData(data.data, dataPath);
   };
 
   private soapFetch = (apiUrl: string): {}[] => {
@@ -64,6 +72,18 @@ export abstract class Graph {
   private graphQlFetch = (apiUrl: string): {}[] => {
     //TODO: complete this in future
     throw new Error("Function not yet implemented");
+  };
+
+  public getObjectData = (o: {}, s: string): any => {
+    if (s === undefined || s.length === 0) return o;
+    s = s.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties
+    s = s.replace(/^\./, ""); // strip a leading dot
+    let a: string[] = s.split(".");
+    for (let k of a) {
+      //@ts-ignore
+      o = o[k];
+    }
+    return o;
   };
 
   public abstract generateGraph(

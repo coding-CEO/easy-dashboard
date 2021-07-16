@@ -9,7 +9,10 @@ import { DraggableProvided } from 'react-beautiful-dnd';
 import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import GetAppIcon from '@material-ui/icons/GetApp'
 import AlertDialogue from '../../components/AlertDialogue';
+import exportFromJSON from 'export-from-json'
+import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
 
 interface Props {
     graph: Graph;
@@ -44,7 +47,8 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     }, []);
 
     const getGraphData = async (): Promise<void> => {
-        setGraphData(await props.graph.fetchGraphData(props.graph.apiUrl, props.graph.apiType));
+        setGraphData(await props.graph.fetchGraphData(props.graph.apiUrl, props.graph.apiType,
+            props.graph.dataPath));
     }
 
     const renderGraph = (): void => {
@@ -61,7 +65,7 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
     }
 
     const updateGraph = (): void => {
-        if (!graphInstance || graphData.length <= 0) return;
+        if (!graphInstance || !graphData || graphData.length <= 0) return;
         const isApiUpdated = getIsApiUpdated();
         if (isApiUpdated) {
             setGraphApiType(props.graph.apiType);
@@ -89,7 +93,7 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
 
     const getEditControls = (): JSX.Element => {
         return (
-            <div className="graphEditControlsContainer">
+            <React.Fragment>
                 <IconButton aria-label="edit" color="primary"
                     onClick={handleEditGraphClick}>
                     <EditIcon />
@@ -99,14 +103,45 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
                 </IconButton>
                 <AlertDialogue open={isDeleteDialogueOpen} title={"Want to Delete this Graph ?"}
                     onClose={handleGraphDelete} />
-            </div>
+            </React.Fragment>
         );
+    }
+
+    const handleDownloadGraphClick = (): void => {
+        if (!graphInstance) return;
+        const fileName: string = props.graph.name;
+        const exportType = exportFromJSON.types.csv;
+        try {
+            if (props.graph instanceof PieGraph) {
+                if (!graphInstance.data.labels) return;
+                let data: {}[] = [];
+                for (let i = 0; i < graphInstance.data.labels.length; i++) {
+                    data.push({
+                        key: graphInstance.data.labels[i],
+                        value: graphInstance.data.datasets[0].data[i],
+                    });
+                }
+                exportFromJSON({ data, fileName, exportType });
+            } else {
+                let data = graphInstance.data.datasets[0].data;
+                exportFromJSON({ data, fileName, exportType });
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
         <div className="graphCanvasContainer" ref={ref} {...props.provided.draggableProps}
             {...props.provided.dragHandleProps}>
-            {props.isEditModeOn && getEditControls()}
+
+            <div className="graphEditControlsContainer">
+                {props.isEditModeOn && getEditControls()}
+                <IconButton aria-label="edit" color="primary"
+                    onClick={handleDownloadGraphClick}>
+                    <GetAppIcon />
+                </IconButton>
+            </div>
             <div className="graphSecondCanvasContainer">
                 <canvas ref={canvasRef} />
             </div>

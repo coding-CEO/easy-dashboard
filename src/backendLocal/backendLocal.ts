@@ -105,6 +105,7 @@ export class BackendLocal {
                   graph.colorHex,
                   graph.xCoordinatePath,
                   graph.yCoordinatePath,
+                  graph.dataPath,
                   graph.fill
                 )
               );
@@ -118,7 +119,8 @@ export class BackendLocal {
                   graph.apiUrl,
                   graph.colorHex,
                   graph.xCoordinatePath,
-                  graph.yCoordinatePath
+                  graph.yCoordinatePath,
+                  graph.dataPath
                 )
               );
               break;
@@ -132,6 +134,7 @@ export class BackendLocal {
                   graph.colorHex,
                   graph.xCoordinatePath,
                   graph.yCoordinatePath,
+                  graph.dataPath,
                   graph.innerRadiusPercent
                 )
               );
