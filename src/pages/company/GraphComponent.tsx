@@ -12,6 +12,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import GetAppIcon from '@material-ui/icons/GetApp'
 import AlertDialogue from '../../components/AlertDialogue';
 import exportFromJSON from 'export-from-json'
+import { PieGraph } from '../../classes/dashboardClasses/graphClasses/PieGraph';
 
 interface Props {
     graph: Graph;
@@ -107,10 +108,22 @@ const GraphComponent = (props: Props, ref: React.Ref<HTMLDivElement>) => {
 
     const handleDownloadGraphClick = (): void => {
         if (!graphInstance) return;
-        let data = graphInstance.data.datasets[0].data;
         const fileName: string = props.graph.name;
         const exportType = exportFromJSON.types.csv;
-        exportFromJSON({ data, fileName, exportType });
+        if (props.graph instanceof PieGraph) {
+            if (!graphInstance.data.labels) return;
+            let data: {}[] = [];
+            for (let i = 0; i < graphInstance.data.labels.length; i++) {
+                data.push({
+                    key: graphInstance.data.labels[i],
+                    value: graphInstance.data.datasets[0].data[i],
+                });
+            }
+            exportFromJSON({ data, fileName, exportType });
+        } else {
+            let data = graphInstance.data.datasets[0].data;
+            exportFromJSON({ data, fileName, exportType });
+        }
     }
 
     return (
