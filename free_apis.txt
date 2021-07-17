@@ -1,0 +1,5 @@
+https://datausa.io/api/data?drilldowns=Nation&measures=Population
+
+https://jsonplaceholder.typicode.com/users
+
+https://api.coinpaprika.com/v1/coins/btc-bitcoin
